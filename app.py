@@ -3,6 +3,8 @@ import os
 import requests
 from io import BytesIO
 from gtts import gTTS
+import base64
+import streamlit.components.v1 as components
 from dotenv import load_dotenv
 
 # Optional: Load local .env if running locally
@@ -110,9 +112,20 @@ if user_text:
     with st.chat_message("assistant"):
         st.markdown(reply)
 
-    # ===== VOICE OUTPUT VIA gTTS =====
+    # ===== AUTO SPEAK REPLY VIA gTTS + JS =====
     tts = gTTS(text=reply, lang='en')
     audio_bytes = BytesIO()
     tts.write_to_fp(audio_bytes)
     audio_bytes.seek(0)
-    st.audio(audio_bytes, format="audio/mp3", autoplay=True)
+
+    # Encode audio to base64 and autoplay
+    audio_base64 = base64.b64encode(audio_bytes.read()).decode("utf-8")
+    components.html(f"""
+    <audio id="audio" autoplay>
+      <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+    </audio>
+    <script>
+      var audio = document.getElementById('audio');
+      audio.play();
+    </script>
+    """, height=0)
