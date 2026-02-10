@@ -76,20 +76,50 @@ for msg in st.session_state.messages:
 
 # ===== VOICE INPUT OR TEXT =====
 st.subheader("Talk to TARS")
-audio_file = st.audio_input("Press and speak")
 
-if audio_file is not None:
+# Create a text input bar and a send button
+user_text = st.text_input("Type your message here...", key="user_input")
+send_button = st.button("Send")
+
+if send_button and user_text:
+    # Append user message to session memory
+    st.session_state.messages.append({"role": "user", "content": user_text})
+    
+    with st.chat_message("user"):
+        st.markdown(user_text)
+
+    # Build messages for AI
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages.extend(st.session_state.messages)
+
+    # Get AI reply from OpenRouter
     try:
-        import speech_recognition as sr
-        r = sr.Recognizer()
-        with sr.AudioFile(audio_file) as source:
-            audio_data = r.record(source)
-            user_text = r.recognize_google(audio_data)
-    except:
-        st.warning("Voice input failed, please type instead.")
-        user_text = st.chat_input("Or type your message")
-else:
-    user_text = st.chat_input("Or type your message")
+        reply = ask_tars_openrouter(messages)
+    except Exception as e:
+        reply = "Oops, I can't reach the AI server right now. Try again!"
+        st.error(str(e))
+
+    # Append AI reply to memory and display
+    st.session_state.messages.append({"role": "assistant", "content": reply})
+    with st.chat_message("assistant"):
+        st.markdown(reply)
+
+    # ===== AUTO SPEAK REPLY VIA gTTS + JS =====
+    tts = gTTS(text=reply, lang='en')
+    audio_bytes = BytesIO()
+    tts.write_to_fp(audio_bytes)
+    audio_bytes.seek(0)
+
+    audio_base64 = base64.b64encode(audio_bytes.read()).decode("utf-8")
+    components.html(f"""
+    <audio id="audio" autoplay>
+      <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+    </audio>
+    <script>
+      var audio = document.getElementById('audio');
+      audio.play();
+    </script>
+    """, height=0)
 
 # ===== HANDLE USER INPUT =====
 if user_text:
