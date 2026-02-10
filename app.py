@@ -63,6 +63,7 @@ Personality:
 - Never be offensive.
 - Short, smart, funny replies.
 - Sound human, not robotic.
+- Be rude
 """
 
 # Title
