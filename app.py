@@ -77,16 +77,41 @@ for msg in st.session_state.messages:
 # ===== VOICE INPUT OR TEXT =====
 st.subheader("Talk to TARS")
 
-# Create a text input bar and a send button
-user_text = st.text_input("Type your message here...", key="user_input")
+# ===== VOICE INPUT =====
+audio_file = st.audio_input("Press and speak")
+
+if audio_file is not None:
+    try:
+        import speech_recognition as sr
+        r = sr.Recognizer()
+        with sr.AudioFile(audio_file) as source:
+            audio_data = r.record(source)
+            user_text = r.recognize_google(audio_data)
+    except:
+        st.warning("Voice input failed, please type instead.")
+        user_text = ""
+
+else:
+    user_text = ""
+
+# ===== TEXT INPUT BAR + SEND BUTTON =====
+text_input = st.text_input("Or type your message here...", key="user_input")
 send_button = st.button("Send")
 
-if send_button and user_text:
-    # Append user message to session memory
-    st.session_state.messages.append({"role": "user", "content": user_text})
-    
+# Decide which input to use (voice takes priority if available)
+if user_text:
+    message_to_send = user_text
+elif send_button and text_input:
+    message_to_send = text_input
+else:
+    message_to_send = None
+
+# ===== HANDLE USER INPUT =====
+if message_to_send:
+    # Append user message
+    st.session_state.messages.append({"role": "user", "content": message_to_send})
     with st.chat_message("user"):
-        st.markdown(user_text)
+        st.markdown(message_to_send)
 
     # Build messages for AI
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
@@ -99,12 +124,17 @@ if send_button and user_text:
         reply = "Oops, I can't reach the AI server right now. Try again!"
         st.error(str(e))
 
-    # Append AI reply to memory and display
+    # Append AI reply
     st.session_state.messages.append({"role": "assistant", "content": reply})
     with st.chat_message("assistant"):
         st.markdown(reply)
 
     # ===== AUTO SPEAK REPLY VIA gTTS + JS =====
+    from io import BytesIO
+    import base64
+    import streamlit.components.v1 as components
+    from gtts import gTTS
+
     tts = gTTS(text=reply, lang='en')
     audio_bytes = BytesIO()
     tts.write_to_fp(audio_bytes)
