@@ -1,20 +1,53 @@
 import streamlit as st
-from openai import OpenAI
 import os
+import requests
+import pyttsx3
 from dotenv import load_dotenv
 
+# Load local .env if running locally
 load_dotenv()
-client = OpenAI()
 
+# ========== OPENROUTER SETUP ==========
+API_KEY = os.getenv("OPENROUTER_API_KEY")
+API_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+def ask_tars_openrouter(messages):
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "gpt-4o-mini",  # or "gpt-j-6b" for free smaller model
+        "messages": messages,
+        "temperature": 0.95,
+        "max_tokens": 150
+    }
+
+    response = requests.post(API_URL, json=payload, headers=headers)
+    response.raise_for_status()
+    data = response.json()
+    reply = data['choices'][0]['message']['content']
+    return reply
+
+# ========== OFFLINE TTS ==========
+engine = pyttsx3.init()
+engine.setProperty('volume', 1.0)  # max volume
+engine.setProperty('rate', 180)    # speed
+
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+# ========== STREAMLIT APP SETUP ==========
 st.set_page_config(page_title="TARS Control", page_icon="🤖")
 
-# ========== SESSION MEMORY ==========
+# Session memory
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ========== SIDEBAR CONTROL PANEL ==========
+# Sidebar control panel
 st.sidebar.title("TARS Control Panel")
-
 humor = st.sidebar.slider("Humor Level", 0, 100, 95)
 sarcasm = st.sidebar.toggle("Sarcasm Mode", True)
 loyalty = st.sidebar.slider("Loyalty", 0, 100, 100)
@@ -22,6 +55,7 @@ loyalty = st.sidebar.slider("Loyalty", 0, 100, 100)
 if st.sidebar.button("Clear Memory"):
     st.session_state.messages = []
 
+# System prompt
 SYSTEM_PROMPT = f"""
 You are TARS-inspired AI.
 
@@ -37,29 +71,33 @@ Personality:
 - Sound human, not robotic.
 """
 
-# ========== TITLE ==========
+# Title
 st.title("🤖 TARS AI")
 st.caption("Terminal-grade brain. Movie-grade personality.")
 
-# ========== SHOW CHAT ==========
+# Show chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# ========== VOICE INPUT ==========
+# Voice input or text
 st.subheader("Talk to TARS")
 audio_file = st.audio_input("Press and speak")
 
 if audio_file is not None:
-    transcript = client.audio.transcriptions.create(
-        model="gpt-4o-mini-transcribe",
-        file=audio_file
-    )
-    user_text = transcript.text
+    try:
+        import speech_recognition as sr
+        r = sr.Recognizer()
+        with sr.AudioFile(audio_file) as source:
+            audio_data = r.record(source)
+            user_text = r.recognize_google(audio_data)
+    except:
+        st.warning("Voice input failed, please type instead.")
+        user_text = st.chat_input("Or type your message")
 else:
     user_text = st.chat_input("Or type your message")
 
-# ========== HANDLE USER INPUT ==========
+# Handle user input
 if user_text:
     st.session_state.messages.append({"role": "user", "content": user_text})
 
@@ -69,24 +107,16 @@ if user_text:
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     messages.extend(st.session_state.messages)
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=messages,
-        temperature=0.95,
-        max_tokens=120
-    )
+    try:
+        reply = ask_tars_openrouter(messages)
+    except Exception as e:
+        reply = "Oops, I can't reach the AI server right now. Try again!"
+        st.error(str(e))
 
-    reply = response.choices[0].message.content
     st.session_state.messages.append({"role": "assistant", "content": reply})
 
     with st.chat_message("assistant"):
         st.markdown(reply)
 
-    # ========== LOUD VOICE OUTPUT ==========
-    speech = client.audio.speech.create(
-        model="gpt-4o-mini-tts",
-        voice="alloy",
-        input=reply
-    )
-
-    st.audio(speech.read(), format="audio/mp3", autoplay=True)
+    # Speak reply loudly
+    speak(reply)
