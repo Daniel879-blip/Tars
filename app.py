@@ -687,7 +687,47 @@ def chat_page():
                     f'<h3>{title}</h3><p>{prompt}</p></div>',
                     unsafe_allow_html=True,
                 )
+# ========================================================
 
+# TARS QUICK ACTIONS
+
+# ========================================================
+
+st.markdown("### ⚡ TARS Quick Actions")
+
+q1, q2, q3, q4 = st.columns(4)
+
+with q1:
+
+    if st.button("💡 Ideas", use_container_width=True):
+
+        st.session_state.quick_prompt = "Give me 5 creative ideas I can try today."
+
+with q2:
+
+    if st.button("🧑‍💻 Code", use_container_width=True):
+
+        st.session_state.quick_prompt = "Help me write or improve some code."
+
+with q3:
+
+    if st.button("✍️ Write", use_container_width=True):
+
+        st.session_state.quick_prompt = "Help me write something professional and interesting."
+
+with q4:
+
+    if st.button("😂 Funny", use_container_width=True):
+
+        st.session_state.quick_prompt = "Tell me something funny and entertaining."
+
+# THEN your existing message display
+
+for msg in st.session_state.messages:
+
+    with st.chat_message(msg["role"]):
+
+        st.markdown(msg["content"])
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
