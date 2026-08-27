@@ -691,7 +691,14 @@ def chat_page():
 # ============================================================
 # ROUTER
 # ============================================================
-if st.session_state.logged_in and st.session_state.page == "chat":
+if st.session_state.page == "about":
+
+    developer_page()
+
+elif st.session_state.logged_in and st.session_state.page == "chat":
+
     chat_page()
+
 else:
+
     home_page()
