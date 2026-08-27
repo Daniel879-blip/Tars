@@ -96,6 +96,7 @@ init_db()
 # ============================================================
 defaults = {
     "page": "home",
+    "theme": "TARS Dark",
     "logged_in": False,
     "user": None,
     "messages": [],
@@ -112,6 +113,30 @@ for key, value in defaults.items():
 # ============================================================
 st.markdown("""
 <style>
+/* ============================================================
+   TARS THEMES
+   ============================================================ */
+
+body:has(.theme-light) .stApp {
+    background: #f5f7fb;
+    color: #111827;
+}
+
+.theme-light {
+    background: #f5f7fb;
+    color: #111827;
+}
+
+.theme-midnight {
+    background: #020617;
+    color: #f8fafc;
+}
+
+.theme-amoled {
+    background: #000000;
+    color: #ffffff;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 html, body, [class*="css"] {
@@ -611,6 +636,24 @@ def chat_page():
     with st.sidebar:
         st.markdown("### 🤖 TARS")
         st.caption(f"Signed in as {name}")
+
+                theme = st.selectbox(
+            "🎨 Theme",
+            [
+                "TARS Dark",
+                "Midnight",
+                "Light",
+                "AMOLED",
+            ],
+            index=[
+                "TARS Dark",
+                "Midnight",
+                "Light",
+                "AMOLED",
+            ].index(st.session_state.theme),
+        )
+
+        st.session_state.theme = theme
         humor = st.slider("Humor", 0, 100, 90)
         sarcasm = st.toggle("Sarcasm", True)
         loyalty = st.slider("Loyalty", 0, 100, 100)
