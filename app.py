@@ -971,9 +971,9 @@ def home_page():
             st.rerun()
     with c2:
         if st.button("Sign in", use_container_width=True):
-            st.session_state.show_login = True
-            st.session_state.show_signup = False
-            st.rerun()
+    st.session_state.show_login = True
+    st.session_state.show_signup = False
+    st.rerun()
 
     st.write("")
     a, b, c = st.columns(3)
@@ -1000,7 +1000,7 @@ def home_page():
 # AUTH
 # ============================================================
 def signup_form():
-    st.markdown('<div class="auth-shell">', unsafe_allow_html=True)
+    st.markdown('<div id="signup-form" class="auth-shell">', unsafe_allow_html=True)
     st.markdown('<div class="auth-title">Create your account</div>', unsafe_allow_html=True)
     st.markdown('<div class="auth-sub">Join TARS in a few seconds.</div>', unsafe_allow_html=True)
 
@@ -1036,7 +1036,7 @@ def signup_form():
 
 
 def login_form():
-    st.markdown('<div class="auth-shell">', unsafe_allow_html=True)
+    st.markdown('<div id="login-form" class="auth-shell">', unsafe_allow_html=True)
     st.markdown('<div class="auth-title">Welcome back</div>', unsafe_allow_html=True)
     st.markdown('<div class="auth-sub">Sign in and continue your conversation.</div>', unsafe_allow_html=True)
 
