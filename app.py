@@ -636,23 +636,7 @@ def chat_page():
     with st.sidebar:
         st.markdown("### 🤖 TARS")
         st.caption(f"Signed in as {name}")
-
-                theme = st.selectbox(
-            "🎨 Theme",
-            [
-                "TARS Dark",
-                "Midnight",
-                "Light",
-                "AMOLED",
-            ],
-            index=[
-                "TARS Dark",
-                "Midnight",
-                "Light",
-                "AMOLED",
-            ].index(st.session_state.theme),
-        )
-
+        
         st.session_state.theme = theme
         humor = st.slider("Humor", 0, 100, 90)
         sarcasm = st.toggle("Sarcasm", True)
@@ -663,7 +647,7 @@ def chat_page():
         theme = st.selectbox(
             "🎨 Theme",
             ["TARS Dark", "Midnight", "AMOLED", "Light"]
-    )
+        )
 
         if st.button("＋ New conversation", use_container_width=True):
             st.session_state.messages = []
