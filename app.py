@@ -30,6 +30,22 @@ DB_FILE = "tars_users.db"
 # ============================================================
 # DATABASE / AUTH
 # ============================================================
+
+DB_FILE = "tars_users.db"
+
+# ============================================================
+# APP / DEVELOPER INFORMATION
+# ============================================================
+
+APP_NAME = "TARS AI"
+APP_VERSION = "1.0.0"
+
+DEVELOPER_NAME = "Okeyode Happiness Daniel"
+DEVELOPER_PHONE = "09053516260"
+DEVELOPER_EMAIL = "happinessd472@gmail.com"
+
+COPYRIGHT_YEAR = "2026"
+
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     cur = conn.cursor()
