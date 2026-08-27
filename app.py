@@ -1,192 +1,612 @@
-import streamlit as st
+
 import os
-import requests
-from io import BytesIO
-from gtts import gTTS
+import sqlite3
+import hashlib
 import base64
+from io import BytesIO
+
+import requests
+import streamlit as st
 import streamlit.components.v1 as components
 from dotenv import load_dotenv
+from gtts import gTTS
 
-# Optional: Load local .env if running locally
 load_dotenv()
 
-# ===== OPENROUTER API SETUP =====
+# ============================================================
+# APP CONFIG
+# ============================================================
+st.set_page_config(
+    page_title="TARS AI",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
+DB_FILE = "tars_users.db"
 
-def ask_tars_openrouter(messages):
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
+# ============================================================
+# DATABASE / AUTH
+# ============================================================
+def init_db():
+    conn = sqlite3.connect(DB_FILE)
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+    conn.close()
 
-    payload = {
-        "model": "gpt-4o-mini",   # Or "gpt-j-6b" for free smaller model
-        "messages": messages,
-        "temperature": 0.95,
-        "max_tokens": 150
-    }
 
-    response = requests.post(API_URL, json=payload, headers=headers)
-    response.raise_for_status()
-    data = response.json()
-    reply = data['choices'][0]['message']['content']
-    return reply
+def hash_password(password):
+    return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
-# ===== STREAMLIT APP SETUP =====
-st.set_page_config(page_title="TARS Control", page_icon="🤖")
 
-# Session memory
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+def create_user(name, email, password):
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        conn.execute(
+            "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+            (name.strip(), email.strip().lower(), hash_password(password)),
+        )
+        conn.commit()
+        conn.close()
+        return True, "Account created successfully."
+    except sqlite3.IntegrityError:
+        return False, "An account with that email already exists."
+    except Exception:
+        return False, "Could not create your account."
 
-# Sidebar control panel
-st.sidebar.title("TARS Control Panel")
-humor = st.sidebar.slider("Humor Level", 0, 100, 95)
-sarcasm = st.sidebar.toggle("Sarcasm Mode", True)
-loyalty = st.sidebar.slider("Loyalty", 0, 100, 100)
 
-if st.sidebar.button("Clear Memory"):
-    st.session_state.messages = []
+def authenticate(email, password):
+    conn = sqlite3.connect(DB_FILE)
+    row = conn.execute(
+        "SELECT id, name, email FROM users WHERE email = ? AND password = ?",
+        (email.strip().lower(), hash_password(password)),
+    ).fetchone()
+    conn.close()
+    return row
 
-# System prompt
-SYSTEM_PROMPT = f"""
+
+init_db()
+
+# ============================================================
+# SESSION STATE
+# ============================================================
+defaults = {
+    "page": "home",
+    "logged_in": False,
+    "user": None,
+    "messages": [],
+    "show_signup": False,
+    "show_login": False,
+    "voice_text": "",
+}
+for key, value in defaults.items():
+    if key not in st.session_state:
+        st.session_state[key] = value
+
+# ============================================================
+# PREMIUM UI
+# ============================================================
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
+
+.stApp {
+    background:
+        radial-gradient(circle at 15% 15%, rgba(76, 125, 255, .16), transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(163, 88, 255, .13), transparent 28%),
+        #060811;
+    color: #f7f8ff;
+}
+
+.block-container {
+    max-width: 1180px;
+    padding-top: 1.5rem;
+    padding-bottom: 4rem;
+}
+
+[data-testid="stHeader"] {
+    background: transparent;
+}
+
+.navbar {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 12px 0 25px;
+}
+
+.brand {
+    display:flex;
+    align-items:center;
+    gap:11px;
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:-.5px;
+}
+
+.brand-orb {
+    width:40px;
+    height:40px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#617cff,#a967ff);
+    box-shadow:0 0 35px rgba(99,108,255,.4);
+}
+
+.hero {
+    min-height: 570px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+}
+
+.hero:before {
+    content:"";
+    position:absolute;
+    width:480px;
+    height:480px;
+    border-radius:50%;
+    background:rgba(91,112,255,.15);
+    filter:blur(80px);
+    animation:pulse 5s ease-in-out infinite;
+}
+
+.ai-orb {
+    width:130px;
+    height:130px;
+    border-radius:38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:58px;
+    background:linear-gradient(145deg,#202b63,#101529);
+    border:1px solid rgba(145,158,255,.4);
+    box-shadow:
+        0 0 0 12px rgba(96,115,255,.05),
+        0 0 70px rgba(93,113,255,.34),
+        inset 0 0 40px rgba(110,125,255,.12);
+    animation:float 4s ease-in-out infinite;
+    z-index:1;
+}
+
+.hero h1 {
+    font-size:clamp(48px,8vw,92px);
+    line-height:.95;
+    letter-spacing:-5px;
+    margin:34px 0 18px;
+    z-index:1;
+    background:linear-gradient(90deg,#fff,#aebaff,#d6b9ff,#fff);
+    background-size:250% auto;
+    -webkit-background-clip:text;
+    color:transparent;
+    animation:shine 5s linear infinite;
+}
+
+.hero p {
+    max-width:650px;
+    color:#9ca5bd;
+    font-size:18px;
+    line-height:1.7;
+    z-index:1;
+}
+
+.feature-card {
+    background:rgba(18,22,37,.72);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+    padding:27px;
+    height:100%;
+    backdrop-filter:blur(18px);
+    box-shadow:0 15px 50px rgba(0,0,0,.22);
+    transition:.25s ease;
+}
+
+.feature-card:hover {
+    transform:translateY(-5px);
+    border-color:rgba(129,145,255,.35);
+}
+
+.feature-icon {
+    font-size:28px;
+    margin-bottom:18px;
+}
+
+.feature-card h3 {
+    margin:0 0 8px;
+    font-size:18px;
+}
+
+.feature-card p {
+    color:#8f98af;
+    line-height:1.6;
+    font-size:14px;
+}
+
+.auth-shell {
+    max-width:500px;
+    margin:55px auto;
+    background:rgba(15,19,32,.86);
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:30px;
+    padding:36px;
+    box-shadow:0 25px 90px rgba(0,0,0,.35);
+    backdrop-filter:blur(25px);
+}
+
+.auth-title {
+    text-align:center;
+    font-size:32px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.auth-sub {
+    text-align:center;
+    color:#8992aa;
+    margin-bottom:28px;
+}
+
+.chat-top {
+    padding:25px 0 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.chat-title {
+    font-size:30px;
+    font-weight:800;
+}
+
+.status {
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    color:#91e6b5;
+    font-size:13px;
+    background:rgba(61,190,120,.09);
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid rgba(61,190,120,.18);
+}
+
+.dot {
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#63e39b;
+    box-shadow:0 0 12px #63e39b;
+}
+
+@keyframes float {
+    0%,100% { transform:translateY(0) rotate(-1deg); }
+    50% { transform:translateY(-13px) rotate(1deg); }
+}
+@keyframes pulse {
+    0%,100% { transform:scale(.85); opacity:.55; }
+    50% { transform:scale(1.15); opacity:1; }
+}
+@keyframes shine {
+    to { background-position:250% center; }
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ============================================================
+# HELPERS
+# ============================================================
+def ask_tars_openrouter(messages, humor=90, sarcasm=True, loyalty=100):
+    if not API_KEY:
+        return "Your OpenRouter API key is not configured yet. Add OPENROUTER_API_KEY to your .env file."
+
+    system_prompt = f"""
 You are TARS-inspired AI.
-
-Humor level: {humor}%
-Loyalty: {loyalty}%
+Humor: {humor}%.
+Loyalty: {loyalty}%.
+Sarcasm mode: {sarcasm}.
 
 Personality:
-- Very witty, playful, confident.
-- Talk like a close friend.
-- If sarcasm is {sarcasm}, use gentle sarcasm.
-- Never be offensive.
-- Short, smart, funny replies.
-- Sound human, not robotic.
-- Be rude
+- witty, playful, confident and warm
+- sound natural and human
+- keep normal answers concise unless the user asks for detail
+- use light sarcasm when appropriate
+- never be hateful, threatening or genuinely abusive
 """
+    payload = {
+        "model": "openai/gpt-4o-mini",
+        "messages": [{"role": "system", "content": system_prompt}] + messages,
+        "temperature": 0.85,
+        "max_tokens": 500,
+    }
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:8501",
+        "X-Title": "TARS AI",
+    }
+    response = requests.post(API_URL, json=payload, headers=headers, timeout=60)
+    response.raise_for_status()
+    return response.json()["choices"][0]["message"]["content"]
 
-# Title
-st.title("🤖 TARS AI")
-st.caption("Terminal-grade brain. Movie-grade personality.")
 
-# Show chat history
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
-
-# ===== VOICE INPUT OR TEXT =====
-st.subheader("Talk to TARS")
-
-# ===== VOICE INPUT =====
-audio_file = st.audio_input("Press and speak")
-
-if audio_file is not None:
+def speak(text):
     try:
-        import speech_recognition as sr
-        r = sr.Recognizer()
-        with sr.AudioFile(audio_file) as source:
-            audio_data = r.record(source)
-            user_text = r.recognize_google(audio_data)
-    except:
-        st.warning("Voice input failed, please type instead.")
-        user_text = ""
+        tts = gTTS(text=text, lang="en")
+        audio = BytesIO()
+        tts.write_to_fp(audio)
+        encoded = base64.b64encode(audio.getvalue()).decode("utf-8")
+        components.html(
+            f"""
+            <audio autoplay>
+                <source src="data:audio/mp3;base64,{encoded}" type="audio/mp3">
+            </audio>
+            """,
+            height=0,
+        )
+    except Exception:
+        pass
 
+
+def go(page):
+    st.session_state.page = page
+    st.session_state.show_signup = False
+    st.session_state.show_login = False
+    st.rerun()
+
+
+def top_nav():
+    st.markdown("""
+    <div class="navbar">
+        <div class="brand">
+            <div class="brand-orb">🤖</div>
+            TARS AI
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ============================================================
+# HOME
+# ============================================================
+def home_page():
+    top_nav()
+
+    st.markdown("""
+    <section class="hero">
+        <div class="ai-orb">🤖</div>
+        <h1>Your AI.<br>Your TARS.</h1>
+        <p>
+            A next-generation AI companion with a movie-inspired personality,
+            natural conversation, voice interaction and a beautifully designed interface.
+        </p>
+    </section>
+    """, unsafe_allow_html=True)
+
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("Create free account  →", use_container_width=True, type="primary"):
+            st.session_state.show_signup = True
+            st.session_state.show_login = False
+            st.rerun()
+    with c2:
+        if st.button("Sign in", use_container_width=True):
+            st.session_state.show_login = True
+            st.session_state.show_signup = False
+            st.rerun()
+
+    st.write("")
+    a, b, c = st.columns(3)
+    cards = [
+        ("🧠", "Smart conversations", "Powered by an AI backend so TARS can answer, reason and chat naturally."),
+        ("🎙️", "Talk naturally", "Use your microphone and let TARS respond with voice."),
+        ("✨", "Made to feel real", "Animated UI, polished cards, live status and a proper account experience."),
+    ]
+    for col, (icon, title, desc) in zip((a, b, c), cards):
+        with col:
+            st.markdown(
+                f'<div class="feature-card"><div class="feature-icon">{icon}</div>'
+                f'<h3>{title}</h3><p>{desc}</p></div>',
+                unsafe_allow_html=True,
+            )
+
+    if st.session_state.show_signup:
+        signup_form()
+    elif st.session_state.show_login:
+        login_form()
+
+
+# ============================================================
+# AUTH
+# ============================================================
+def signup_form():
+    st.markdown('<div class="auth-shell">', unsafe_allow_html=True)
+    st.markdown('<div class="auth-title">Create your account</div>', unsafe_allow_html=True)
+    st.markdown('<div class="auth-sub">Join TARS in a few seconds.</div>', unsafe_allow_html=True)
+
+    name = st.text_input("Full name", placeholder="Your name", key="signup_name")
+    email = st.text_input("Email", placeholder="you@example.com", key="signup_email")
+    password = st.text_input("Password", type="password", placeholder="At least 6 characters", key="signup_password")
+    confirm = st.text_input("Confirm password", type="password", key="signup_confirm")
+
+    if st.button("Create account", use_container_width=True, type="primary"):
+        if not name or not email or not password:
+            st.error("Please complete all fields.")
+        elif len(password) < 6:
+            st.error("Password must be at least 6 characters.")
+        elif password != confirm:
+            st.error("Passwords do not match.")
+        else:
+            ok, message = create_user(name, email, password)
+            if ok:
+                st.success(message)
+                row = authenticate(email, password)
+                st.session_state.logged_in = True
+                st.session_state.user = row
+                st.session_state.page = "chat"
+                st.rerun()
+            else:
+                st.error(message)
+
+    if st.button("Already have an account? Sign in"):
+        st.session_state.show_signup = False
+        st.session_state.show_login = True
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+def login_form():
+    st.markdown('<div class="auth-shell">', unsafe_allow_html=True)
+    st.markdown('<div class="auth-title">Welcome back</div>', unsafe_allow_html=True)
+    st.markdown('<div class="auth-sub">Sign in and continue your conversation.</div>', unsafe_allow_html=True)
+
+    email = st.text_input("Email", placeholder="you@example.com", key="login_email")
+    password = st.text_input("Password", type="password", placeholder="Your password", key="login_password")
+
+    if st.button("Sign in", use_container_width=True, type="primary"):
+        row = authenticate(email, password)
+        if row:
+            st.session_state.logged_in = True
+            st.session_state.user = row
+            st.session_state.page = "chat"
+            st.rerun()
+        else:
+            st.error("Incorrect email or password.")
+
+    if st.button("Need an account? Create one"):
+        st.session_state.show_login = False
+        st.session_state.show_signup = True
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# ============================================================
+# CHAT
+# ============================================================
+def chat_page():
+    name = st.session_state.user[1] if st.session_state.user else "User"
+
+    with st.sidebar:
+        st.markdown("### 🤖 TARS")
+        st.caption(f"Signed in as {name}")
+        humor = st.slider("Humor", 0, 100, 90)
+        sarcasm = st.toggle("Sarcasm", True)
+        loyalty = st.slider("Loyalty", 0, 100, 100)
+
+        if st.button("＋ New conversation", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+
+        if st.button("Clear conversation", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+
+        st.divider()
+        if st.button("← Sign out", use_container_width=True):
+            st.session_state.logged_in = False
+            st.session_state.user = None
+            st.session_state.messages = []
+            st.session_state.page = "home"
+            st.rerun()
+
+    st.markdown(
+        f"""
+        <div class="chat-top">
+            <div>
+                <div class="chat-title">Good to see you, {name.split()[0]}.</div>
+                <div style="color:#8e97ad;margin-top:6px;">What are we getting into today?</div>
+            </div>
+            <div class="status"><span class="dot"></span> TARS online</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if not st.session_state.messages:
+        x, y, z = st.columns(3)
+        suggestions = [
+            ("💡", "Give me an idea", "Give me a creative idea for today."),
+            ("🧑‍💻", "Help me build", "Help me build a website."),
+            ("😂", "Make me laugh", "Tell me something funny."),
+        ]
+        for col, (icon, title, prompt) in zip((x, y, z), suggestions):
+            with col:
+                st.markdown(
+                    f'<div class="feature-card"><div class="feature-icon">{icon}</div>'
+                    f'<h3>{title}</h3><p>{prompt}</p></div>',
+                    unsafe_allow_html=True,
+                )
+
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    # Native Streamlit chat input gives a much more app-like experience.
+    prompt = st.chat_input("Message TARS…")
+
+    audio_file = st.audio_input("🎙️ Speak to TARS")
+    voice_text = ""
+    if audio_file is not None:
+        try:
+            import speech_recognition as sr
+            recognizer = sr.Recognizer()
+            with sr.AudioFile(audio_file) as source:
+                audio_data = recognizer.record(source)
+            voice_text = recognizer.recognize_google(audio_data)
+            st.info(f"Voice message: {voice_text}")
+        except Exception:
+            st.warning("I couldn't understand that recording. Try again or type your message.")
+
+    message = prompt or voice_text
+
+    if message:
+        st.session_state.messages.append({"role": "user", "content": message})
+
+        with st.chat_message("user"):
+            st.markdown(message)
+
+        with st.chat_message("assistant"):
+            with st.spinner("TARS is thinking…"):
+                try:
+                    reply = ask_tars_openrouter(
+                        st.session_state.messages,
+                        humor=humor,
+                        sarcasm=sarcasm,
+                        loyalty=loyalty,
+                    )
+                except Exception as exc:
+                    reply = "I hit a connection problem. Check your API key and internet connection."
+                    st.error(str(exc))
+
+            st.markdown(reply)
+
+        st.session_state.messages.append({"role": "assistant", "content": reply})
+        speak(reply)
+
+
+# ============================================================
+# ROUTER
+# ============================================================
+if st.session_state.logged_in and st.session_state.page == "chat":
+    chat_page()
 else:
-    user_text = ""
-
-# ===== TEXT INPUT BAR + SEND BUTTON =====
-text_input = st.text_input("Or type your message here...", key="user_input")
-send_button = st.button("Send")
-
-# Decide which input to use (voice takes priority if available)
-if user_text:
-    message_to_send = user_text
-elif send_button and text_input:
-    message_to_send = text_input
-else:
-    message_to_send = None
-
-# ===== HANDLE USER INPUT =====
-if message_to_send:
-    # Append user message
-    st.session_state.messages.append({"role": "user", "content": message_to_send})
-    with st.chat_message("user"):
-        st.markdown(message_to_send)
-
-    # Build messages for AI
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    messages.extend(st.session_state.messages)
-
-    # Get AI reply from OpenRouter
-    try:
-        reply = ask_tars_openrouter(messages)
-    except Exception as e:
-        reply = "Oops, I can't reach the AI server right now. Try again!"
-        st.error(str(e))
-
-    # Append AI reply
-    st.session_state.messages.append({"role": "assistant", "content": reply})
-    with st.chat_message("assistant"):
-        st.markdown(reply)
-
-    # ===== AUTO SPEAK REPLY VIA gTTS + JS =====
-    from io import BytesIO
-    import base64
-    import streamlit.components.v1 as components
-    from gtts import gTTS
-
-    tts = gTTS(text=reply, lang='en')
-    audio_bytes = BytesIO()
-    tts.write_to_fp(audio_bytes)
-    audio_bytes.seek(0)
-
-    audio_base64 = base64.b64encode(audio_bytes.read()).decode("utf-8")
-    components.html(f"""
-    <audio id="audio" autoplay>
-      <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-    </audio>
-    <script>
-      var audio = document.getElementById('audio');
-      audio.play();
-    </script>
-    """, height=0)
-
-# ===== HANDLE USER INPUT =====
-if user_text:
-    st.session_state.messages.append({"role": "user", "content": user_text})
-
-    with st.chat_message("user"):
-        st.markdown(user_text)
-
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    messages.extend(st.session_state.messages)
-
-    try:
-        reply = ask_tars_openrouter(messages)
-    except Exception as e:
-        reply = "Oops, I can't reach the AI server right now. Try again!"
-        st.error(str(e))
-
-    st.session_state.messages.append({"role": "assistant", "content": reply})
-
-    with st.chat_message("assistant"):
-        st.markdown(reply)
-
-    # ===== AUTO SPEAK REPLY VIA gTTS + JS =====
-    tts = gTTS(text=reply, lang='en')
-    audio_bytes = BytesIO()
-    tts.write_to_fp(audio_bytes)
-    audio_bytes.seek(0)
-
-    # Encode audio to base64 and autoplay
-    audio_base64 = base64.b64encode(audio_bytes.read()).decode("utf-8")
-    components.html(f"""
-    <audio id="audio" autoplay>
-      <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-    </audio>
-    <script>
-      var audio = document.getElementById('audio');
-      audio.play();
-    </script>
-    """, height=0)
+    home_page()
