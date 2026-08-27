@@ -541,6 +541,11 @@ def developer_page():
     with col2:
         st.subheader("👨‍💻 Developer")
 
+        st.image(
+            "developer.jpg",
+            width=140
+        )
+
         st.write(f"**{DEVELOPER_NAME}**")
 
         st.write("Creator & Developer of TARS AI.")
