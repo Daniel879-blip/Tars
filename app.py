@@ -631,31 +631,14 @@ def developer_page():
 # CHAT
 # ============================================================
 def chat_page():
-
     name = st.session_state.user[1] if st.session_state.user else "User"
 
     with st.sidebar:
-
         st.markdown("### 🤖 TARS")
         st.caption(f"Signed in as {name}")
-
         humor = st.slider("Humor", 0, 100, 90)
         sarcasm = st.toggle("Sarcasm", True)
         loyalty = st.slider("Loyalty", 0, 100, 100)
-
-        st.divider()
-
-        theme = st.selectbox(
-            "🎨 Theme",
-            ["TARS Dark", "Midnight", "AMOLED", "Light"],
-            key="theme"
-        )
-
-        st.divider()
-
-        if st.button("ℹ️ About TARS", use_container_width=True):
-            st.session_state.page = "developer"
-            st.rerun()
 
         if st.button("＋ New conversation", use_container_width=True):
             st.session_state.messages = []
@@ -666,68 +649,12 @@ def chat_page():
             st.rerun()
 
         st.divider()
-
         if st.button("← Sign out", use_container_width=True):
             st.session_state.logged_in = False
             st.session_state.user = None
             st.session_state.messages = []
             st.session_state.page = "home"
             st.rerun()
-
-if theme == "Light":
-    st.markdown("""
-    <style>
-    .stApp {
-        background: #f5f7fb !important;
-        color: #111827 !important;
-    }
-
-    [data-testid="stSidebar"] {
-        background: #ffffff !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-elif theme == "Midnight":
-    st.markdown("""
-    <style>
-    .stApp {
-        background: #020617 !important;
-        color: #f8fafc !important;
-    }
-
-    [data-testid="stSidebar"] {
-        background: #0f172a !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-elif theme == "AMOLED":
-    st.markdown("""
-    <style>
-    .stApp {
-        background: #000000 !important;
-        color: #ffffff !important;
-    }
-
-    [data-testid="stSidebar"] {
-        background: #000000 !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-else:
-    st.markdown("""
-    <style>
-    .stApp {
-        background:
-            radial-gradient(circle at 15% 15%, rgba(76,125,255,.16), transparent 30%),
-            radial-gradient(circle at 85% 20%, rgba(163,88,255,.13), transparent 28%),
-            #060811 !important;
-        color: #f7f8ff !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
     st.markdown(
         f"""
@@ -798,11 +725,10 @@ else:
                     reply = "I hit a connection problem. Check your API key and internet connection."
                     st.error(str(exc))
 
-            type_tars_response(reply)
+            st.markdown(reply)
 
         st.session_state.messages.append({"role": "assistant", "content": reply})
         speak(reply)
-
 
 # ============================================================
 # ROUTER
