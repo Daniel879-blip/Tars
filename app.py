@@ -465,6 +465,53 @@ def speak(text):
     except Exception:
         pass
 
+# ============================================================
+# WEB SEARCH
+# ============================================================
+
+TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
+TAVILY_URL = "https://api.tavily.com/search"
+
+
+def web_search(query):
+    if not TAVILY_API_KEY:
+        return "Web search is not configured yet."
+
+    try:
+        response = requests.post(
+            TAVILY_URL,
+            json={
+                "api_key": TAVILY_API_KEY,
+                "query": query,
+                "search_depth": "basic",
+                "include_answer": True,
+                "max_results": 5,
+            },
+            timeout=30,
+        )
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        results = []
+
+        if data.get("answer"):
+            results.append(
+                f"Search answer:\n{data['answer']}"
+            )
+
+        for result in data.get("results", []):
+            results.append(
+                f"Title: {result.get('title', '')}\n"
+                f"Content: {result.get('content', '')}\n"
+                f"URL: {result.get('url', '')}"
+            )
+
+        return "\n\n".join(results)
+
+    except Exception as exc:
+        return f"Web search error: {exc}"
 
 def go(page):
     st.session_state.page = page
