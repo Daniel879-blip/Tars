@@ -1005,6 +1005,20 @@ def home_page():
 # ============================================================
 def signup_form():
     st.markdown('<div id="signup-form" class="auth-shell">', unsafe_allow_html=True)
+    components.html("""
+<script>
+setTimeout(function() {
+    const form = window.parent.document.getElementById("signup-form");
+    if (form) {
+        form.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    }
+}, 300);
+</script>
+""", height=0)
+    
     st.markdown('<div class="auth-title">Create your account</div>', unsafe_allow_html=True)
     st.markdown('<div class="auth-sub">Join TARS in a few seconds.</div>', unsafe_allow_html=True)
 
@@ -1041,6 +1055,24 @@ def signup_form():
 
 def login_form():
     st.markdown('<div id="login-form" class="auth-shell">', unsafe_allow_html=True)
+    def login_form():
+    st.markdown('<div id="login-form" class="auth-shell">', unsafe_allow_html=True)
+
+    components.html("""
+    <script>
+    setTimeout(function() {
+        const form = window.parent.document.getElementById("login-form");
+        if (form) {
+            form.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+    }, 300);
+    </script>
+    """, height=0)
+
+    st.markdown('<div class="auth-title">Welcome back</div>', unsafe_allow_html=True)
     st.markdown('<div class="auth-title">Welcome back</div>', unsafe_allow_html=True)
     st.markdown('<div class="auth-sub">Sign in and continue your conversation.</div>', unsafe_allow_html=True)
 
