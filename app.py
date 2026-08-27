@@ -34,17 +34,206 @@ DB_FILE = "tars_users.db"
 DB_FILE = "tars_users.db"
 
 # ============================================================
-# APP / DEVELOPER INFORMATION
+# ABOUT TARS / DEVELOPER PAGE
 # ============================================================
 
-APP_NAME = "TARS AI"
-APP_VERSION = "1.0.0"
+def developer_page():
 
-DEVELOPER_NAME = "Okeyode Happiness Daniel"
-DEVELOPER_PHONE = "09053516260"
-DEVELOPER_EMAIL = "happinessd472@gmail.com"
+    top_nav()
 
-COPYRIGHT_YEAR = "2026"
+    st.markdown("""
+    <div class="hero" style="min-height:300px;">
+
+        <div class="ai-orb">🤖</div>
+
+        <h1 style="
+            font-size:58px;
+            letter-spacing:-3px;
+            margin-top:25px;
+        ">
+            About TARS
+        </h1>
+
+        <p>
+            Meet TARS — your intelligent AI companion,
+            designed to help you think, create, learn and
+            get things done.
+        </p>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+
+    col1, col2 = st.columns(2, gap="large")
+
+
+    # ABOUT TARS
+    with col1:
+
+        st.markdown("""
+        <div class="feature-card">
+
+            <div class="feature-icon">🤖</div>
+
+            <h3>About TARS AI</h3>
+
+            <p>
+                TARS AI is a next-generation artificial intelligence
+                companion created to provide intelligent, natural and
+                engaging conversations.
+            </p>
+
+            <p>
+                TARS can help with questions, ideas, learning,
+                creativity, problem solving and everyday tasks.
+            </p>
+
+            <p>
+                The application combines AI technology, voice
+                interaction and a modern animated interface to create
+                a unique digital companion experience.
+            </p>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    # DEVELOPER PROFILE
+    with col2:
+
+        st.markdown(f"""
+        <div class="feature-card">
+
+            <div class="feature-icon">👨‍💻</div>
+
+            <h3>Developer Profile</h3>
+
+            <h2 style="margin-top:10px;">
+                {DEVELOPER_NAME}
+            </h2>
+
+            <p>
+                Creator & Developer of TARS AI.
+            </p>
+
+            <p>
+                Building creative digital experiences
+                powered by artificial intelligence.
+            </p>
+
+            <p>
+                📞 {DEVELOPER_PHONE}
+            </p>
+
+            <p>
+                ✉️ {DEVELOPER_EMAIL}
+            </p>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    st.write("")
+
+
+    col3, col4 = st.columns(2, gap="large")
+
+
+    # APP VERSION
+    with col3:
+
+        st.markdown(f"""
+        <div class="feature-card">
+
+            <div class="feature-icon">⚙️</div>
+
+            <h3>App Information</h3>
+
+            <p>
+                <strong>App:</strong> {APP_NAME}
+            </p>
+
+            <p>
+                <strong>Version:</strong> {APP_VERSION}
+            </p>
+
+            <p>
+                <strong>Status:</strong> Active Development
+            </p>
+
+            <p>
+                <strong>Developer:</strong> {DEVELOPER_NAME}
+            </p>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    # COPYRIGHT
+    with col4:
+
+        st.markdown(f"""
+        <div class="feature-card">
+
+            <div class="feature-icon">©️</div>
+
+            <h3>Copyright</h3>
+
+            <p>
+                © {COPYRIGHT_YEAR} {DEVELOPER_NAME}.
+                All rights reserved.
+            </p>
+
+            <p>
+                TARS AI, its original branding, interface design,
+                application structure and original content are the
+                property of the developer unless otherwise stated.
+            </p>
+
+            <p>
+                Unauthorized copying, reproduction, redistribution,
+                modification or commercial use of the original
+                application or its branding is prohibited without
+                permission from the developer.
+            </p>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    st.markdown(f"""
+    <div style="
+        text-align:center;
+        margin-top:50px;
+        padding:25px;
+        color:#727b91;
+        font-size:13px;
+    ">
+
+        <strong>{APP_NAME}</strong>
+        · Version {APP_VERSION}
+
+        <br><br>
+
+        © {COPYRIGHT_YEAR} {DEVELOPER_NAME}.
+        All rights reserved.
+
+        <br>
+
+        Built with ❤️ and AI.
+
+    </div>
+    """, unsafe_allow_html=True)
+
+
+    if st.button("← Back to TARS", use_container_width=True):
+
+        if st.session_state.logged_in:
+            st.session_state.page = "chat"
+        else:
+            st.session_state.page = "home"
+
+        st.rerun()
 
 def init_db():
     conn = sqlite3.connect(DB_FILE)
