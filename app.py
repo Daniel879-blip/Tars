@@ -510,7 +510,79 @@ def login_form():
         st.session_state.show_signup = True
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
+    
+# ============================================================
+# ABOUT TARS / DEVELOPER PAGE
+# ============================================================
 
+def developer_page():
+
+    st.title("🤖 About TARS AI")
+    st.caption("Your intelligent AI companion")
+
+    st.divider()
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("🤖 About TARS")
+
+        st.write(
+            "TARS AI is a next-generation artificial intelligence "
+            "companion designed to provide intelligent, natural and "
+            "engaging conversations."
+        )
+
+        st.write(
+            "TARS can help you learn, create, brainstorm, solve "
+            "problems and have everyday conversations."
+        )
+
+    with col2:
+        st.subheader("👨‍💻 Developer")
+
+        st.write(f"**{DEVELOPER_NAME}**")
+
+        st.write("Creator & Developer of TARS AI.")
+
+        st.write(f"📞 {DEVELOPER_PHONE}")
+
+        st.write(f"📧 {DEVELOPER_EMAIL}")
+
+    st.divider()
+
+    st.subheader("⚙️ App Information")
+
+    st.write(f"**Application:** {APP_NAME}")
+    st.write(f"**Version:** {APP_VERSION}")
+    st.write("**Status:** Active Development")
+
+    st.divider()
+
+    st.subheader("©️ Copyright")
+
+    st.write(
+        f"© {COPYRIGHT_YEAR} {DEVELOPER_NAME}. "
+        "All rights reserved."
+    )
+
+    st.write(
+        "TARS AI, its original branding, interface design and "
+        "original application content belong to the developer "
+        "unless otherwise stated."
+    )
+
+    st.write(
+        "Unauthorized copying, reproduction, redistribution, "
+        "modification or commercial use of the original application "
+        "or its branding is prohibited without permission."
+    )
+
+    st.divider()
+
+    if st.button("← Back to TARS", use_container_width=True):
+        st.session_state.page = "chat"
+        st.rerun()
 
 # ============================================================
 # CHAT
