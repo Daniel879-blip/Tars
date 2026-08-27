@@ -731,9 +731,8 @@ for msg in st.session_state.messages:
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
-
-        
-     prompt = st.chat_input("Message TARS…") 
+ 
+    prompt = st.chat_input("Message TARS…")
         
     # Native Streamlit chat input gives a much more app-like experience.
     prompt = st.chat_input("Message TARS…")
