@@ -963,7 +963,7 @@ def home_page():
     </section>
     """, unsafe_allow_html=True)
 
-c1, c2 = st.columns(2)
+ c1, c2 = st.columns(2)
 
     with c1:
         if st.button("Create free account  →", use_container_width=True, type="primary"):
