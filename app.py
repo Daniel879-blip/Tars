@@ -955,7 +955,7 @@ def home_page():
     st.markdown("""
     <section class="hero">
         <div class="ai-orb">🤖</div>
-        <h1>TARS<br>AI</h1>
+        <h1>TARS.</h1>
         <p>
             A next-generation AI companion with a movie-inspired personality,
             natural conversation, voice interaction and a beautifully designed interface.
