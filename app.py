@@ -963,19 +963,21 @@ def home_page():
     </section>
     """, unsafe_allow_html=True)
 
-    c1, c2 = st.columns(2)
+        c1, c2 = st.columns(2)
+
     with c1:
         if st.button("Create free account  →", use_container_width=True, type="primary"):
             st.session_state.show_signup = True
             st.session_state.show_login = False
             st.rerun()
-            
-     with c2:
+
+    with c2:
         if st.button("Sign in", use_container_width=True):
             st.session_state.show_login = True
             st.session_state.show_signup = False
             st.rerun()
 
+    st.write("")
     st.write("")
     a, b, c = st.columns(3)
     cards = [
