@@ -51,11 +51,11 @@ def developer_page():
             letter-spacing:-3px;
             margin-top:25px;
         ">
-            About TARS
+            About DAN
         </h1>
 
         <p>
-            Meet TARS — your intelligent AI companion,
+            Meet Dan — your intelligent AI companion,
             designed to help you think, create, learn and
             get things done.
         </p>
@@ -67,7 +67,7 @@ def developer_page():
     col1, col2 = st.columns(2, gap="large")
 
 
-    # ABOUT TARS
+    # ABOUT DAN
     with col1:
 
         st.markdown("""
@@ -78,13 +78,13 @@ def developer_page():
             <h3>About TARS AI</h3>
 
             <p>
-                TARS AI is a next-generation artificial intelligence
+                Dan AI is a next-generation artificial intelligence
                 companion created to provide intelligent, natural and
                 engaging conversations.
             </p>
 
             <p>
-                TARS can help with questions, ideas, learning,
+                DAN can help with questions, ideas, learning,
                 creativity, problem solving and everyday tasks.
             </p>
 
