@@ -1070,7 +1070,7 @@ def login_form():
     </script>
     """, height=0)
 
-    st.markdown('<div class="auth-title">Welcome back</div>', unsafe_allow_html=True)
+   
     st.markdown('<div class="auth-title">Welcome back</div>', unsafe_allow_html=True)
     st.markdown('<div class="auth-sub">Sign in and continue your conversation.</div>', unsafe_allow_html=True)
 
