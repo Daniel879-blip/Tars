@@ -1124,37 +1124,6 @@ def chat_page():
         sarcasm = st.toggle("Sarcasm", True)
         loyalty = st.slider("Loyalty", 0, 100, 100)
 
-if st.button("🗃️ Archive conversation", use_container_width=True):
-
-    if st.session_state.messages:
-
-        user_id = st.session_state.user[0]
-
-        # Use the first user message as the archive title
-        title = next(
-            (
-                msg["content"]
-                for msg in st.session_state.messages
-                if msg["role"] == "user"
-            ),
-            "TARS Conversation"
-        )
-
-        title = title[:60]
-
-        archive_conversation(
-            user_id,
-            title,
-            st.session_state.messages
-        )
-
-        st.session_state.messages = []
-
-        st.success("Conversation archived.")
-        st.rerun()
-
-    else:
-        st.info("There is no conversation to archive.")
         if st.button("＋ New conversation", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
