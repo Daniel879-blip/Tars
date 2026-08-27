@@ -962,6 +962,9 @@ def home_page():
         </p>
     </section>
     """, unsafe_allow_html=True)
+
+
+
 c1, c2 = st.columns(2)
 
     with c1:
