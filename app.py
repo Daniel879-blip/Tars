@@ -3,6 +3,7 @@ import os
 import sqlite3
 import hashlib
 import base64
+import time
 from io import BytesIO
 
 import requests
@@ -328,6 +329,18 @@ html, body, [class*="css"] {
 # ============================================================
 # HELPERS
 # ============================================================
+
+def type_tars_response(text):
+    placeholder = st.empty()
+    displayed = ""
+
+    for char in text:
+        displayed += char
+        placeholder.markdown(displayed)
+        time.sleep(0.015)
+
+    return displayed
+    
 def ask_tars_openrouter(messages, humor=90, sarcasm=True, loyalty=100):
     if not API_KEY:
         return "Your OpenRouter API key is not configured yet. Add OPENROUTER_API_KEY to your .env file."
@@ -691,7 +704,7 @@ def chat_page():
                     reply = "I hit a connection problem. Check your API key and internet connection."
                     st.error(str(exc))
 
-            st.markdown(reply)
+            type_tars_response(reply)
 
         st.session_state.messages.append({"role": "assistant", "content": reply})
         speak(reply)
