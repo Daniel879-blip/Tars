@@ -411,56 +411,18 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-# ============================================================
+#============================================================
 # HELPERS
 # ============================================================
-
-def type_tars_response(text):
-    placeholder = st.empty()
-    displayed = ""
-
-    for char in text:
-        displayed += char
-        placeholder.markdown(displayed)
-        time.sleep(0.015)
-
-    return displayed
-    
-def ask_tars_openrouter(
-    messages,
-    humor=90,
-    sarcasm=True,
-    loyalty=100,
-    user_id=None
-):
+def ask_tars_openrouter(messages, humor=90, sarcasm=True, loyalty=100):
     if not API_KEY:
         return "Your OpenRouter API key is not configured yet. Add OPENROUTER_API_KEY to your .env file."
 
-    # --------------------------------------------------------
-    # LOAD USER MEMORY
-    # --------------------------------------------------------
-
-    memory_text = ""
-
-    if user_id:
-        memories = get_memories(user_id)
-
-        if memories:
-            memory_text = "\n".join(
-                f"- {memory[1]}"
-                for memory in memories
-            )
-
-    # --------------------------------------------------------
-    # TARS PERSONALITY
-    # --------------------------------------------------------
-
     system_prompt = f"""
 You are TARS-inspired AI.
-
 Humor: {humor}%.
 Loyalty: {loyalty}%.
-Sarcasm mode: {sarcasm}%.
+Sarcasm mode: {sarcasm}.
 
 Personality:
 - witty, playful, confident and warm
@@ -468,41 +430,58 @@ Personality:
 - keep normal answers concise unless the user asks for detail
 - use light sarcasm when appropriate
 - never be hateful, threatening or genuinely abusive
-
-USER MEMORY:
-{memory_text if memory_text else "No saved memories yet."}
-
-Use the user's saved memories when they are relevant.
-Do not claim to remember something that is not in the memory.
 """
-
     payload = {
         "model": "openai/gpt-4o-mini",
-        "messages": [
-            {"role": "system", "content": system_prompt}
-        ] + messages,
+        "messages": [{"role": "system", "content": system_prompt}] + messages,
         "temperature": 0.85,
         "max_tokens": 500,
     }
-
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json",
         "HTTP-Referer": "http://localhost:8501",
         "X-Title": "TARS AI",
     }
-
-    response = requests.post(
-        API_URL,
-        json=payload,
-        headers=headers,
-        timeout=60
-    )
-
+    response = requests.post(API_URL, json=payload, headers=headers, timeout=60)
     response.raise_for_status()
-
     return response.json()["choices"][0]["message"]["content"]
 
+
+def speak(text):
+    try:
+        tts = gTTS(text=text, lang="en")
+        audio = BytesIO()
+        tts.write_to_fp(audio)
+        encoded = base64.b64encode(audio.getvalue()).decode("utf-8")
+        components.html(
+            f"""
+            <audio autoplay>
+                <source src="data:audio/mp3;base64,{encoded}" type="audio/mp3">
+            </audio>
+            """,
+            height=0,
+        )
+    except Exception:
+        pass
+
+
+def go(page):
+    st.session_state.page = page
+    st.session_state.show_signup = False
+    st.session_state.show_login = False
+    st.rerun()
+
+
+def top_nav():
+    st.markdown("""
+    <div class="navbar">
+        <div class="brand">
+            <div class="brand-orb">🤖</div>
+            TARS AI
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 # ============================================================
 # HOME
 # ============================================================
