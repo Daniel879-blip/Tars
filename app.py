@@ -728,30 +728,6 @@ else:
     }
     </style>
     """, unsafe_allow_html=True)
-        
-            st.session_state.messages = []
-
-            st.rerun()
-
-        if st.button("Clear conversation", use_container_width=True):
-
-            st.session_state.messages = []
-
-            st.rerun()
-
-        st.divider()
-
-        if st.button("← Sign out", use_container_width=True):
-
-            st.session_state.logged_in = False
-
-            st.session_state.user = None
-
-            st.session_state.messages = []
-
-            st.session_state.page = "home"
-
-            st.rerun()
 
     st.markdown(
         f"""
