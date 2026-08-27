@@ -1139,11 +1139,12 @@ if st.button("🗑️ Clear conversation", use_container_width=True):
     st.session_state.messages = []
     st.rerun()
             
-        if st.button("ℹ️ About TARS", use_container_width=True):
+      if st.button("ℹ️ About TARS", use_container_width=True):
            st.session_state.page = "about"
            st.rerun()
 
         st.divider()
+
         if st.button("← Sign out", use_container_width=True):
             st.session_state.logged_in = False
             st.session_state.user = None
