@@ -637,21 +637,42 @@ def chat_page():
     with st.sidebar:
 
         st.markdown("### 🤖 TARS")
-
         st.caption(f"Signed in as {name}")
 
         humor = st.slider("Humor", 0, 100, 90)
-
         sarcasm = st.toggle("Sarcasm", True)
-
         loyalty = st.slider("Loyalty", 0, 100, 100)
 
         st.divider()
+
         theme = st.selectbox(
-            
-    "🎨 Theme",
-    ["TARS Dark", "Midnight", "AMOLED", "Light"],
-    key="theme"
+            "🎨 Theme",
+            ["TARS Dark", "Midnight", "AMOLED", "Light"],
+            key="theme"
+        )
+
+        st.divider()
+
+        if st.button("ℹ️ About TARS", use_container_width=True):
+            st.session_state.page = "developer"
+            st.rerun()
+
+        if st.button("＋ New conversation", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+
+        if st.button("Clear conversation", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+
+        st.divider()
+
+        if st.button("← Sign out", use_container_width=True):
+            st.session_state.logged_in = False
+            st.session_state.user = None
+            st.session_state.messages = []
+            st.session_state.page = "home"
+            st.rerun()
 )
 
 if theme == "Light":
