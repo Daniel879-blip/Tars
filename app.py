@@ -1055,8 +1055,6 @@ setTimeout(function() {
 
 def login_form():
     st.markdown('<div id="login-form" class="auth-shell">', unsafe_allow_html=True)
-    def login_form():
-st.markdown('<div id="login-form" class="auth-shell">', unsafe_allow_html=True)
 
     components.html("""
     <script>
