@@ -970,10 +970,10 @@ def home_page():
             st.session_state.show_login = False
             st.rerun()
     with c2:
-        if st.button("Sign in", use_container_width=True):
-    st.session_state.show_login = True
-    st.session_state.show_signup = False
-    st.rerun()
+            if st.button("Sign in", use_container_width=True):
+        st.session_state.show_login = True
+        st.session_state.show_signup = False
+        st.rerun()
 
     st.write("")
     a, b, c = st.columns(3)
