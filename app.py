@@ -1181,7 +1181,7 @@ if st.button("🗃️ Archive conversation", use_container_width=True):
         f"""
         <div class="chat-top">
             <div>
-                <div class="chat-title">Good to see you, {name.split()[0]}.</div>
+                <div class="chat-title">Good to see you.</div>
                 <div style="color:#8e97ad;margin-top:6px;">What are we getting into today?</div>
             </div>
             <div class="status"><span class="dot"></span> TARS online</div>
