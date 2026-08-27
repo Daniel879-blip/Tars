@@ -1139,9 +1139,13 @@ if st.button("🗑️ Clear conversation", use_container_width=True):
     st.session_state.messages = []
     st.rerun()
             
-      if st.button("ℹ️ About TARS", use_container_width=True):
-           st.session_state.page = "about"
-           st.rerun()
+              if st.button("🗑️ Clear conversation", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+
+        if st.button("ℹ️ About TARS", use_container_width=True):
+            st.session_state.page = "about"
+            st.rerun()
 
         st.divider()
 
@@ -1151,7 +1155,7 @@ if st.button("🗑️ Clear conversation", use_container_width=True):
             st.session_state.messages = []
             st.session_state.page = "home"
             st.rerun()
-
+            
     st.markdown(
         f"""
         <div class="chat-top">
