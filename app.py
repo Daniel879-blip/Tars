@@ -731,12 +731,10 @@ for msg in st.session_state.messages:
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
- 
     prompt = st.chat_input("Message TARS…")
-        
+       
     # Native Streamlit chat input gives a much more app-like experience.
     prompt = st.chat_input("Message TARS…")
-
     audio_file = st.audio_input("🎙️ Speak to TARS")
     voice_text = ""
     if audio_file is not None:
