@@ -729,8 +729,6 @@ else:
     </style>
     """, unsafe_allow_html=True)
         
-        if st.button("＋ New conversation", use_container_width=True):
-
             st.session_state.messages = []
 
             st.rerun()
