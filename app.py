@@ -89,6 +89,55 @@ def create_user(name, email, password):
     except Exception:
         return False, "Could not create your account."
 
+def create_user(name, email, password):
+    # KEEP ALL YOUR EXISTING create_user CODE HERE
+    ...
+
+
+# ============================================================
+# MEMORY
+# ============================================================
+
+def save_memory(user_id, memory):
+    conn = sqlite3.connect(DB_FILE)
+
+    conn.execute(
+        "INSERT INTO memories (user_id, memory) VALUES (?, ?)",
+        (user_id, memory.strip())
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_memories(user_id):
+    conn = sqlite3.connect(DB_FILE)
+
+    rows = conn.execute(
+        "SELECT id, memory FROM memories WHERE user_id = ? ORDER BY id DESC",
+        (user_id,)
+    ).fetchall()
+
+    conn.close()
+
+    return rows
+
+
+def delete_memory(memory_id, user_id):
+    conn = sqlite3.connect(DB_FILE)
+
+    conn.execute(
+        "DELETE FROM memories WHERE id = ? AND user_id = ?",
+        (memory_id, user_id)
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def authenticate(email, password):
+    # KEEP ALL YOUR EXISTING authenticate CODE HERE
+    ...
 
 def authenticate(email, password):
     conn = sqlite3.connect(DB_FILE)
