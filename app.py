@@ -630,29 +630,40 @@ def developer_page():
 # ============================================================
 # CHAT
 # ============================================================
+
 def chat_page():
+
     name = st.session_state.user[1] if st.session_state.user else "User"
 
+    # --------------------------------------------------------
+    # SIDEBAR
+    # --------------------------------------------------------
+
     with st.sidebar:
+
         st.markdown("### 🤖 TARS")
         st.caption(f"Signed in as {name}")
+
         humor = st.slider("Humor", 0, 100, 90)
         sarcasm = st.toggle("Sarcasm", True)
         loyalty = st.slider("Loyalty", 0, 100, 100)
+
+        st.divider()
 
         if st.button("＋ New conversation", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
 
-        if st.button("Clear conversation", use_container_width=True):
+        if st.button("🗑️ Clear conversation", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
-        
-        if st.button("ℹ️ About TARS", use_container_width=True):
-           st.session_state.page = "about"
-           st.rerun()
 
         st.divider()
+
+        if st.button("ℹ️ About TARS", use_container_width=True):
+            st.session_state.page = "developer"
+            st.rerun()
+
         if st.button("← Sign out", use_container_width=True):
             st.session_state.logged_in = False
             st.session_state.user = None
@@ -660,33 +671,164 @@ def chat_page():
             st.session_state.page = "home"
             st.rerun()
 
+    # --------------------------------------------------------
+    # CHAT HEADER
+    # --------------------------------------------------------
+
     st.markdown(
         f"""
         <div class="chat-top">
             <div>
-                <div class="chat-title">Good to see you, {name.split()[0]}.</div>
-                <div style="color:#8e97ad;margin-top:6px;">What are we getting into today?</div>
+                <div class="chat-title">
+                    Good to see you, {name.split()[0]}.
+                </div>
+
+                <div style="color:#8e97ad;margin-top:6px;">
+                    What are we getting into today?
+                </div>
             </div>
-            <div class="status"><span class="dot"></span> TARS online</div>
+
+            <div class="status">
+                <span class="dot"></span>
+                TARS online
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    if not st.session_state.messages:
-        x, y, z = st.columns(3)
-        suggestions = [
-            ("💡", "Give me an idea", "Give me a creative idea for today."),
-            ("🧑‍💻", "Help me build", "Help me build a website."),
-            ("😂", "Make me laugh", "Tell me something funny."),
-        ]
-        for col, (icon, title, prompt) in zip((x, y, z), suggestions):
-            with col:
-                st.markdown(
-                    f'<div class="feature-card"><div class="feature-icon">{icon}</div>'
-                    f'<h3>{title}</h3><p>{prompt}</p></div>',
-                    unsafe_allow_html=True,
-                )
+    # --------------------------------------------------------
+    # QUICK ACTIONS
+    # --------------------------------------------------------
+
+    st.markdown("### ⚡ Quick Actions")
+
+    q1, q2, q3, q4 = st.columns(4)
+
+    with q1:
+        if st.button("💡 Ideas", use_container_width=True):
+            st.session_state.messages.append({
+                "role": "user",
+                "content": "Give me 5 creative ideas I can try today."
+            })
+            st.rerun()
+
+    with q2:
+        if st.button("🧑‍💻 Code", use_container_width=True):
+            st.session_state.messages.append({
+                "role": "user",
+                "content": "Help me build something with code."
+            })
+            st.rerun()
+
+    with q3:
+        if st.button("✍️ Write", use_container_width=True):
+            st.session_state.messages.append({
+                "role": "user",
+                "content": "Help me write something professional."
+            })
+            st.rerun()
+
+    with q4:
+        if st.button("😂 Funny", use_container_width=True):
+            st.session_state.messages.append({
+                "role": "user",
+                "content": "Tell me something funny."
+            })
+            st.rerun()
+
+    st.divider()
+
+    # --------------------------------------------------------
+    # SHOW CHAT MESSAGES
+    # --------------------------------------------------------
+
+    for msg in st.session_state.messages:
+
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    # --------------------------------------------------------
+    # TEXT CHAT INPUT
+    # --------------------------------------------------------
+
+    prompt = st.chat_input("Message TARS…")
+
+    # --------------------------------------------------------
+    # VOICE INPUT
+    # --------------------------------------------------------
+
+    audio_file = st.audio_input("🎙️ Speak to TARS")
+
+    voice_text = ""
+
+    if audio_file is not None:
+
+        try:
+
+            import speech_recognition as sr
+
+            recognizer = sr.Recognizer()
+
+            with sr.AudioFile(audio_file) as source:
+                audio_data = recognizer.record(source)
+
+            voice_text = recognizer.recognize_google(audio_data)
+
+            st.info(f"🎙️ You said: {voice_text}")
+
+        except Exception:
+            st.warning(
+                "I couldn't understand that recording. "
+                "Please try again or type your message."
+            )
+
+    # --------------------------------------------------------
+    # GET MESSAGE
+    # --------------------------------------------------------
+
+    message = prompt or voice_text
+
+    if message:
+
+        st.session_state.messages.append({
+            "role": "user",
+            "content": message
+        })
+
+        with st.chat_message("user"):
+            st.markdown(message)
+
+        with st.chat_message("assistant"):
+
+            with st.spinner("TARS is thinking…"):
+
+                try:
+
+                    reply = ask_tars_openrouter(
+                        st.session_state.messages,
+                        humor=humor,
+                        sarcasm=sarcasm,
+                        loyalty=loyalty,
+                    )
+
+                except Exception as exc:
+
+                    reply = (
+                        "I hit a connection problem. "
+                        "Check your API key and internet connection."
+                    )
+
+                    st.error(str(exc))
+
+            st.markdown(reply)
+
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": reply
+        })
+
+        speak(reply)
 # ========================================================
 
 # TARS QUICK ACTIONS
