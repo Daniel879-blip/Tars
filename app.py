@@ -627,54 +627,11 @@ def developer_page():
         st.session_state.page = "chat"
         st.rerun()
 
+
 # ============================================================
 # CHAT
 # ============================================================
-
 def chat_page():
-
-    name = st.session_state.user[1] if st.session_state.user else "User"
-
-    # --------------------------------------------------------
-    # SIDEBAR
-    # --------------------------------------------------------
-
-    with st.sidebar:
-
-        st.markdown("### 🤖 TARS")
-        st.caption(f"Signed in as {name}")
-
-        humor = st.slider("Humor", 0, 100, 90)
-        sarcasm = st.toggle("Sarcasm", True)
-        loyalty = st.slider("Loyalty", 0, 100, 100)
-
-        st.divider()
-
-        if st.button("＋ New conversation", use_container_width=True):
-            st.session_state.messages = []
-            st.rerun()
-
-        if st.button("🗑️ Clear conversation", use_container_width=True):
-            st.session_state.messages = []
-            st.rerun()
-
-        st.divider()
-
-        if st.button("ℹ️ About TARS", use_container_width=True):
-            st.session_state.page = "developer"
-            st.rerun()
-
-        if st.button("← Sign out", use_container_width=True):
-            st.session_state.logged_in = False
-            st.session_state.user = None
-            st.session_state.messages = []
-            st.session_state.page = "home"
-            st.rerun()
-
-    # --------------------------------------------------------
-    # CHAT HEADER
-    # --------------------------------------------------------
-      def chat_page():
     name = st.session_state.user[1] if st.session_state.user else "User"
 
     with st.sidebar:
@@ -773,9 +730,6 @@ def chat_page():
 
         st.session_state.messages.append({"role": "assistant", "content": reply})
         speak(reply)
-    
-
-
 # ============================================================
 # ROUTER
 # ============================================================
