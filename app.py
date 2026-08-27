@@ -600,7 +600,11 @@ def chat_page():
         if st.button("＋ New conversation", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
-
+            
+        if st.button("ℹ️ About TARS", use_container_width=True):
+           st.session_state.page = "about"
+           st.rerun()
+    
         if st.button("Clear conversation", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
