@@ -673,7 +673,6 @@ def chat_page():
             st.session_state.messages = []
             st.session_state.page = "home"
             st.rerun()
-)
 
 if theme == "Light":
     st.markdown("""
