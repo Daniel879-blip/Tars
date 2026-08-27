@@ -1099,7 +1099,7 @@ def chat_page():
 
         if st.button("🗃️ Archive conversation", use_container_width=True):
 
-    if st.session_state.messages:
+        if st.session_state.messages:
 
         user_id = st.session_state.user[0]
 
