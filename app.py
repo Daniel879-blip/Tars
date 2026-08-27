@@ -1097,7 +1097,7 @@ def chat_page():
         sarcasm = st.toggle("Sarcasm", True)
         loyalty = st.slider("Loyalty", 0, 100, 100)
 
-        if st.button("🗃️ Archive conversation", use_container_width=True):
+if st.button("🗃️ Archive conversation", use_container_width=True):
 
         if st.session_state.messages:
 
