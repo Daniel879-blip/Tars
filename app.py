@@ -798,8 +798,35 @@ section[data-testid="stSidebar"] {
         transform: rotate(360deg) translateX(170px) rotate(-360deg);
     }
 }
+
+/* ============================================================
+   TARS SMOOTH SCROLL
+   ============================================================ */
+
+html {
+    scroll-behavior: smooth;
+}
+
+html, body {
+    scroll-padding-top: 30px;
+}
 </style>
 """, unsafe_allow_html=True)
+
+components.html("""
+<script>
+function tarsScrollTo(elementId) {
+    const element = window.parent.document.getElementById(elementId);
+
+    if (element) {
+        element.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    }
+}
+</script>
+""", height=0)
 
 #============================================================
 # HELPERS
