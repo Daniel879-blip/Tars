@@ -657,6 +657,13 @@ def chat_page():
         humor = st.slider("Humor", 0, 100, 90)
         sarcasm = st.toggle("Sarcasm", True)
         loyalty = st.slider("Loyalty", 0, 100, 100)
+           
+        st.divider()
+
+        theme = st.selectbox(
+            "🎨 Theme",
+            ["TARS Dark", "Midnight", "AMOLED", "Light"]
+    )
 
         if st.button("＋ New conversation", use_container_width=True):
             st.session_state.messages = []
