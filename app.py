@@ -145,6 +145,54 @@ def delete_memory(memory_id, user_id):
     conn.commit()
     conn.close()
 
+# ============================================================
+# ARCHIVES
+# ============================================================
+
+def archive_conversation(user_id, title, messages):
+    conn = sqlite3.connect(DB_FILE)
+
+    conn.execute(
+        "INSERT INTO archives (user_id, title, messages) VALUES (?, ?, ?)",
+        (
+            user_id,
+            title,
+            json.dumps(messages)
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_archives(user_id):
+    conn = sqlite3.connect(DB_FILE)
+
+    rows = conn.execute(
+        """
+        SELECT id, title, messages, created_at
+        FROM archives
+        WHERE user_id = ?
+        ORDER BY id DESC
+        """,
+        (user_id,)
+    ).fetchall()
+
+    conn.close()
+
+    return rows
+
+
+def delete_archive(archive_id, user_id):
+    conn = sqlite3.connect(DB_FILE)
+
+    conn.execute(
+        "DELETE FROM archives WHERE id = ? AND user_id = ?",
+        (archive_id, user_id)
+    )
+
+    conn.commit()
+    conn.close()
 
 def authenticate(email, password):
     # KEEP ALL YOUR EXISTING authenticate CODE HERE
