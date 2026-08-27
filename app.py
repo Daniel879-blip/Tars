@@ -32,6 +32,38 @@ DB_FILE = "tars_users.db"
 # ============================================================
 
 DB_FILE = "tars_users.db"
+DB_FILE = "tars_users.db"
+
+# ============================================================
+# APP / DEVELOPER INFORMATION
+# ============================================================
+
+APP_NAME = "TARS AI"
+APP_VERSION = "1.0.0"
+
+DEVELOPER_NAME = "Okeyode Happiness Daniel"
+DEVELOPER_PHONE = "09053516260"
+DEVELOPER_EMAIL = "happinessd472@gmail.com"
+
+COPYRIGHT_YEAR = "2026"
+
+
+# ============================================================
+# ABOUT TARS
+# ============================================================
+
+if "page" not in st.session_state:
+    st.session_state.page = "chat"
+
+
+def developer_page():
+
+    st.title("🤖 About TARS AI")
+
+    # ...the rest of your code...
+
+
+def init_db():
 
 # ============================================================
 # ABOUT TARS / DEVELOPER PAGE
