@@ -207,7 +207,34 @@ def authenticate(email, password):
     ).fetchone()
     conn.close()
     return row
+    
+def get_archives(user_id):
+    conn = sqlite3.connect(DB_FILE)
 
+    rows = conn.execute(
+        """
+        SELECT id, title, messages, created_at
+        FROM archives
+        WHERE user_id = ?
+        ORDER BY id DESC
+        """,
+        (user_id,)
+    ).fetchall()
+
+    conn.close()
+
+    return rows
+    
+def delete_archive(archive_id, user_id):
+    conn = sqlite3.connect(DB_FILE)
+
+    conn.execute(
+        "DELETE FROM archives WHERE id = ? AND user_id = ?",
+        (archive_id, user_id)
+    )
+
+    conn.commit()
+    conn.close()
 
 init_db()
 
