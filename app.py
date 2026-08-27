@@ -1128,13 +1128,11 @@ if st.button("🗃️ Archive conversation", use_container_width=True):
 
     else:
         st.info("There is no conversation to archive.")
+        if st.button("＋ New conversation", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
 
-
-       if st.button("＋ New conversation", use_container_width=True):
-           st.session_state.messages = []
-           st.rerun()
-
-       if st.button("🗑️ Clear conversation", use_container_width=True):
+        if st.button("🗑️ Clear conversation", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
 
@@ -1150,7 +1148,8 @@ if st.button("🗃️ Archive conversation", use_container_width=True):
             st.session_state.messages = []
             st.session_state.page = "home"
             st.rerun()
-            
+
+    
     st.markdown(
         f"""
         <div class="chat-top">
