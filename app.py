@@ -408,6 +408,309 @@ html, body, [class*="css"] {
 @keyframes shine {
     to { background-position:250% center; }
 }
+/* ============================================================
+   TARS ANIMATION PACK
+   ============================================================ */
+
+/* Smooth page entrance */
+.stApp {
+    animation: pageEnter 0.8s ease-out;
+}
+
+@keyframes pageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Animated TARS brand orb */
+.brand-orb {
+    animation:
+        brandPulse 3s ease-in-out infinite,
+        brandRotate 8s linear infinite;
+}
+
+@keyframes brandPulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(99,108,255,.25);
+    }
+
+    50% {
+        box-shadow:
+            0 0 45px rgba(99,108,255,.65),
+            0 0 80px rgba(169,103,255,.25);
+    }
+}
+
+@keyframes brandRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* AI orb breathing animation */
+.ai-orb {
+    animation:
+        float 4s ease-in-out infinite,
+        orbGlow 3s ease-in-out infinite;
+}
+
+@keyframes orbGlow {
+    0%, 100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.25);
+    }
+}
+
+
+/* Feature cards entrance */
+.feature-card {
+    animation: cardEnter 0.7s ease both;
+}
+
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Different delays make cards appear one after another */
+.feature-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.feature-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.feature-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+
+/* Hover effect */
+.feature-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    transition: transform 0.3s ease;
+}
+
+
+/* Buttons */
+.stButton > button {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-3px) scale(1.02);
+    filter: brightness(1.12);
+    box-shadow: 0 10px 30px rgba(99,108,255,.25);
+}
+
+.stButton > button:active {
+    transform: scale(0.97);
+}
+
+
+/* Chat messages slide in */
+[data-testid="stChatMessage"] {
+    animation: messageEnter 0.45s ease-out;
+}
+
+@keyframes messageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Chat input glow */
+[data-testid="stChatInput"] {
+    animation: inputGlow 4s ease-in-out infinite;
+}
+
+@keyframes inputGlow {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(99,108,255,0);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(99,108,255,.12);
+    }
+}
+
+
+/* Online status animation */
+.status {
+    animation: statusPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .65;
+    }
+}
+
+
+/* Online dot breathing */
+.dot {
+    animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: .55;
+    }
+}
+
+
+/* Headings appear smoothly */
+.hero h1 {
+    animation:
+        titleEnter 1s ease-out,
+        shine 5s linear infinite;
+}
+
+@keyframes titleEnter {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Hero description */
+.hero p {
+    animation: descriptionEnter 1.2s ease-out;
+}
+
+@keyframes descriptionEnter {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Sidebar entrance */
+section[data-testid="stSidebar"] {
+    animation: sidebarEnter 0.5s ease-out;
+}
+
+@keyframes sidebarEnter {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+
+/* Inputs */
+.stTextInput input,
+.stTextArea textarea {
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.stTextInput input:focus,
+.stTextArea textarea:focus {
+    transform: scale(1.01);
+    box-shadow: 0 0 20px rgba(99,108,255,.15);
+}
+
+
+/* Loading spinner enhancement */
+[data-testid="stSpinner"] {
+    animation: spinnerFade 0.5s ease-in-out;
+}
+
+@keyframes spinnerFade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+/* Gentle floating background effect */
+.hero:after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 1px solid rgba(130,145,255,.08);
+    animation: orbitRing 8s linear infinite;
+}
+
+@keyframes orbitRing {
+    from {
+        transform: rotate(0deg) translateX(170px) rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg) translateX(170px) rotate(-360deg);
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
