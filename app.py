@@ -631,43 +631,57 @@ def developer_page():
 # CHAT
 # ============================================================
 def chat_page():
+
     name = st.session_state.user[1] if st.session_state.user else "User"
 
-   with st.sidebar:
-    st.markdown("### 🤖 TARS")
-    st.caption(f"Signed in as {name}")
+    with st.sidebar:
 
-    humor = st.slider("Humor", 0, 100, 90)
-    sarcasm = st.toggle("Sarcasm", True)
-    loyalty = st.slider("Loyalty", 0, 100, 100)
+        st.markdown("### 🤖 TARS")
 
-    st.divider()
+        st.caption(f"Signed in as {name}")
 
-    theme = st.selectbox(
-        "🎨 Theme",
-        ["TARS Dark", "Midnight", "AMOLED", "Light"]
-    )
+        humor = st.slider("Humor", 0, 100, 90)
 
-    st.session_state.theme = theme
+        sarcasm = st.toggle("Sarcasm", True)
 
-    if st.button("＋ New conversation", use_container_width=True):
-        st.session_state.messages = []
-        st.rerun()
-            
-        if st.button("ℹ️ About TARS", use_container_width=True):
-           st.session_state.page = "about"
-           st.rerun()
-    
-        if st.button("Clear conversation", use_container_width=True):
+        loyalty = st.slider("Loyalty", 0, 100, 100)
+
+        st.divider()
+
+        theme = st.selectbox(
+
+            "🎨 Theme",
+
+            ["TARS Dark", "Midnight", "AMOLED", "Light"]
+
+        )
+
+        st.session_state.theme = theme
+
+        if st.button("＋ New conversation", use_container_width=True):
+
             st.session_state.messages = []
+
+            st.rerun()
+
+        if st.button("Clear conversation", use_container_width=True):
+
+            st.session_state.messages = []
+
             st.rerun()
 
         st.divider()
+
         if st.button("← Sign out", use_container_width=True):
+
             st.session_state.logged_in = False
+
             st.session_state.user = None
+
             st.session_state.messages = []
+
             st.session_state.page = "home"
+
             st.rerun()
 
     st.markdown(
