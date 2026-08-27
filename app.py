@@ -1135,11 +1135,7 @@ if st.button("＋ New conversation", use_container_width=True):
     st.rerun()
 
 
-if st.button("🗑️ Clear conversation", use_container_width=True):
-    st.session_state.messages = []
-    st.rerun()
-            
-              if st.button("🗑️ Clear conversation", use_container_width=True):
+        if st.button("🗑️ Clear conversation", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
 
