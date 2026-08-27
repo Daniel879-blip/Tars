@@ -647,17 +647,68 @@ def chat_page():
         loyalty = st.slider("Loyalty", 0, 100, 100)
 
         st.divider()
-
         theme = st.selectbox(
+            
+    "🎨 Theme",
+    ["TARS Dark", "Midnight", "AMOLED", "Light"],
+    key="theme"
+)
 
-            "🎨 Theme",
+if theme == "Light":
+    st.markdown("""
+    <style>
+    .stApp {
+        background: #f5f7fb !important;
+        color: #111827 !important;
+    }
 
-            ["TARS Dark", "Midnight", "AMOLED", "Light"]
+    [data-testid="stSidebar"] {
+        background: #ffffff !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-        )
+elif theme == "Midnight":
+    st.markdown("""
+    <style>
+    .stApp {
+        background: #020617 !important;
+        color: #f8fafc !important;
+    }
 
-        st.session_state.theme = theme
+    [data-testid="stSidebar"] {
+        background: #0f172a !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
+elif theme == "AMOLED":
+    st.markdown("""
+    <style>
+    .stApp {
+        background: #000000 !important;
+        color: #ffffff !important;
+    }
+
+    [data-testid="stSidebar"] {
+        background: #000000 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+else:
+    st.markdown("""
+    <style>
+    .stApp {
+        background:
+            radial-gradient(circle at 15% 15%, rgba(76,125,255,.16), transparent 30%),
+            radial-gradient(circle at 85% 20%, rgba(163,88,255,.13), transparent 28%),
+            #060811 !important;
+        color: #f7f8ff !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+        
         if st.button("＋ New conversation", use_container_width=True):
 
             st.session_state.messages = []
