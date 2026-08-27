@@ -47,6 +47,7 @@ COPYRIGHT_YEAR = "2026"
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     cur = conn.cursor()
+
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,10 +56,20 @@ def init_db():
             password TEXT NOT NULL
         )
     """)
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS memories (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            memory TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+
     conn.commit()
     conn.close()
-
-
+    
 def hash_password(password):
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
