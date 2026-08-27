@@ -426,8 +426,82 @@ def type_tars_response(text):
 
     return displayed
     
-def ask_tars_openrouter(messages, humor=90, sarcasm=True, loyalty=100):
+def ask_tars_openrouter(
+    messages,
+    humor=90,
+    sarcasm=True,
+    loyalty=100,
+    user_id=None
+):
+    if not API_KEY:
+        return "Your OpenRouter API key is not configured yet. Add OPENROUTER_API_KEY to your .env file."
 
+    # --------------------------------------------------------
+    # LOAD USER MEMORY
+    # --------------------------------------------------------
+
+    memory_text = ""
+
+    if user_id:
+        memories = get_memories(user_id)
+
+        if memories:
+            memory_text = "\n".join(
+                f"- {memory[1]}"
+                for memory in memories
+            )
+
+    # --------------------------------------------------------
+    # TARS PERSONALITY
+    # --------------------------------------------------------
+
+    system_prompt = f"""
+You are TARS-inspired AI.
+
+Humor: {humor}%.
+Loyalty: {loyalty}%.
+Sarcasm mode: {sarcasm}%.
+
+Personality:
+- witty, playful, confident and warm
+- sound natural and human
+- keep normal answers concise unless the user asks for detail
+- use light sarcasm when appropriate
+- never be hateful, threatening or genuinely abusive
+
+USER MEMORY:
+{memory_text if memory_text else "No saved memories yet."}
+
+Use the user's saved memories when they are relevant.
+Do not claim to remember something that is not in the memory.
+"""
+
+    payload = {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+            {"role": "system", "content": system_prompt}
+        ] + messages,
+        "temperature": 0.85,
+        "max_tokens": 500,
+    }
+
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:8501",
+        "X-Title": "TARS AI",
+    }
+
+    response = requests.post(
+        API_URL,
+        json=payload,
+        headers=headers,
+        timeout=60
+    )
+
+    response.raise_for_status()
+
+    return response.json()["choices"][0]["message"]["content"]
 
 # ============================================================
 # HOME
