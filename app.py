@@ -1120,7 +1120,25 @@ function tarsScrollTo(elementId) {
         padding-right: 1rem;
     }
 }
+/* ============================================================
+   TARS PAGE TRANSITIONS
+   ============================================================ */
 
+.tars-page-transition {
+    animation: tarsPageTransition 0.55s ease-out;
+}
+
+@keyframes tarsPageTransition {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 </script>
 """, height=0)
 
