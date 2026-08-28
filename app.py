@@ -89,16 +89,25 @@ def hash_password(password):
 def create_user(name, email, password):
     try:
         conn = sqlite3.connect(DB_FILE)
+
         conn.execute(
             "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-            (name.strip(), email.strip().lower(), hash_password(password)),
+            (
+                name.strip(),
+                email.strip().lower(),
+                hash_password(password)
+            )
         )
+
         conn.commit()
         conn.close()
+
         return True, "Account created successfully."
+
     except sqlite3.IntegrityError:
         return False, "An account with that email already exists."
-    except Exception:
+
+    except Exception as e:
         return False, "Could not create your account."
 
 def create_user(name, email, password):
