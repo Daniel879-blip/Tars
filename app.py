@@ -919,6 +919,26 @@ function tarsScrollTo(elementId) {
 
 </script>
 """, height=0)
+</script>
+""", height=0)
+
+components.html("""
+<script>
+function tarsHaptic() {
+    if (navigator.vibrate) {
+        navigator.vibrate(15);
+    }
+}
+
+document.addEventListener("click", function(event) {
+    const button = event.target.closest("button");
+
+    if (button) {
+        tarsHaptic();
+    }
+});
+</script>
+""", height=0)
 
 #============================================================
 # HELPERS
