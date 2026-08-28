@@ -821,6 +821,210 @@ html {
 html, body {
     scroll-padding-top: 30px;
 }
+/* ============================================================
+   TARS ADVANCED ANIMATIONS
+   ============================================================ */
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 30px;
+}
+
+/* Smooth page appearance */
+.stApp {
+    animation: tarsPageIn 0.7s ease-out;
+}
+
+@keyframes tarsPageIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* ============================================================
+   BUTTON HOVER + PRESS
+   ============================================================ */
+
+button {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease !important;
+}
+
+button:hover {
+    transform: translateY(-2px) scale(1.01) !important;
+}
+
+button:active {
+    transform: scale(0.96) !important;
+}
+
+/* ============================================================
+   CARDS POP IN
+   ============================================================ */
+
+.tars-right-panel-item,
+.auth-shell,
+.chat-top {
+    animation: tarsPopIn 0.55s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes tarsPopIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ============================================================
+   RIGHT PANEL
+   ============================================================ */
+
+.tars-right-panel {
+    animation: tarsRightPanel 0.65s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes tarsRightPanel {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.tars-right-panel-item {
+    cursor: pointer;
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.tars-right-panel-item:hover {
+    transform: translateX(-5px) scale(1.02);
+}
+
+/* ============================================================
+   CHAT HEADER
+   ============================================================ */
+
+.chat-top {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.chat-top:hover {
+    transform: translateY(-2px);
+}
+
+/* ============================================================
+   LOGIN / SIGNUP POP
+   ============================================================ */
+
+.auth-shell {
+    animation: authPop 0.6s cubic-bezier(.16,1,.3,1);
+}
+
+@keyframes authPop {
+    0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(20px);
+    }
+
+    70% {
+        transform: scale(1.02) translateY(-2px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ============================================================
+   INPUT FOCUS
+   ============================================================ */
+
+input,
+textarea {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease !important;
+}
+
+input:focus,
+textarea:focus {
+    transform: scale(1.01);
+}
+
+/* ============================================================
+   STATUS DOT
+   ============================================================ */
+
+.status .dot {
+    animation: tarsPulse 1.8s infinite;
+}
+
+@keyframes tarsPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.35);
+        opacity: 0.55;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+* {
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    button:hover {
+        transform: none !important;
+    }
+
+    .tars-right-panel-item:hover {
+        transform: none;
+    }
+
+    .auth-shell,
+    .chat-top {
+        animation-duration: 0.4s;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
