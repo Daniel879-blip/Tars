@@ -825,6 +825,87 @@ function tarsScrollTo(elementId) {
         });
     }
 }
+/* ============================================================
+   TARS RIGHT CONTROL BAR
+   ============================================================ */
+
+.tars-right-panel {
+    position: fixed;
+    right: 18px;
+    top: 90px;
+    width: 230px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+
+    background: rgba(15, 19, 32, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 22px;
+    padding: 18px;
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+
+    z-index: 100;
+    animation: rightPanelEnter 0.6s ease-out;
+}
+
+.tars-right-panel h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.tars-right-panel-item {
+    padding: 11px 12px;
+    margin-bottom: 8px;
+
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+
+    transition: .2s ease;
+}
+
+.tars-right-panel-item:hover {
+    background: rgba(255,255,255,.09);
+    transform: translateX(-3px);
+}
+
+@keyframes rightPanelEnter {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Keep the right panel from covering the main content */
+@media (min-width: 1200px) {
+    .block-container {
+        padding-right: 270px;
+    }
+}
+
+/* On smaller screens, don't let the panel cover the app */
+@media (max-width: 1199px) {
+    .tars-right-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        width: auto;
+        margin: 20px 0;
+    }
+
+    .block-container {
+        padding-right: 1rem;
+    }
+}
+
 </script>
 """, height=0)
 
@@ -1205,6 +1286,38 @@ def chat_page():
             st.session_state.messages = []
             st.session_state.page = "home"
             st.rerun()
+
+        # RIGHT PANEL
+    st.markdown("""
+    <div class="tars-right-panel">
+        <h3>⚡ TARS Quick Actions</h3>
+
+        <div class="tars-right-panel-item">
+            💡 <b>Ideas</b><br>
+            <small>Get creative ideas</small>
+        </div>
+
+        <div class="tars-right-panel-item">
+            ✍️ <b>Write</b><br>
+            <small>Help me write something</small>
+        </div>
+
+        <div class="tars-right-panel-item">
+            🧠 <b>Memory</b><br>
+            <small>Manage TARS memory</small>
+        </div>
+
+        <div class="tars-right-panel-item">
+            📂 <b>Archives</b><br>
+            <small>View saved chats</small>
+        </div>
+
+        <div class="tars-right-panel-item">
+            🎨 <b>Theme</b><br>
+            <small>Customize TARS</small>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     
     st.markdown(
