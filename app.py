@@ -536,7 +536,7 @@ html, body, [class*="css"] {
 
 /* Smooth page entrance */
 .stApp {
-    animation: pageEnter 0.8s ease-out;
+    animation: pageEnter 0.6s ease-out;
 }
 
 @keyframes pageEnter {
