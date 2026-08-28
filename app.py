@@ -114,6 +114,30 @@ def create_user(name, email, password):
     finally:
         if conn:
             conn.close()
+            
+# ============================================================
+# TARS TOAST NOTIFICATIONS
+# ============================================================
+
+def show_tars_toast(title, message):
+    components.html(
+        f"""
+        <div class="tars-toast">
+            <div class="tars-toast-title">{title}</div>
+            <div class="tars-toast-message">{message}</div>
+        </div>
+
+        <script>
+        setTimeout(function() {{
+            const toast = document.querySelector('.tars-toast');
+            if (toast) {{
+                toast.classList.add('hide');
+            }}
+        }}, 3000);
+        </script>
+        """,
+        height=0
+    )          
 
 
 
@@ -1137,6 +1161,64 @@ function tarsScrollTo(elementId) {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+/* ============================================================
+   TARS ANIMATED TOAST NOTIFICATIONS
+   ============================================================ */
+
+.tars-toast {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    z-index: 999999;
+    min-width: 280px;
+    max-width: 380px;
+    padding: 15px 18px;
+    border-radius: 14px;
+    background: rgba(25, 28, 40, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.30);
+    backdrop-filter: blur(12px);
+    color: white;
+    font-size: 14px;
+    animation: tarsToastIn 0.45s cubic-bezier(.2,.8,.2,1);
+}
+
+.tars-toast-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.tars-toast-message {
+    opacity: 0.75;
+}
+
+@keyframes tarsToastIn {
+    from {
+        opacity: 0;
+        transform: translateX(80px) scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.tars-toast.hide {
+    animation: tarsToastOut 0.35s ease-in forwards;
+}
+
+@keyframes tarsToastOut {
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(80px) scale(0.92);
     }
 }
 </script>
