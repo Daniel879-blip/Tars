@@ -856,7 +856,7 @@ html {
 
 /* Smooth page appearance */
 .stApp {
-    animation: tarsPageIn 0.7s ease-out;
+    animation: tarsPageIn 0.25s ease-out;
 }
 
 @keyframes tarsPageIn {
@@ -960,7 +960,7 @@ button:active {
    ============================================================ */
 
 .auth-shell {
-    animation: authPop 0.6s cubic-bezier(.16,1,.3,1);
+    animation: authPop 0.25s cubic-bezier(.16,1,.3,1);
 }
 
 @keyframes authPop {
