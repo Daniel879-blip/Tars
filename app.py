@@ -1294,12 +1294,15 @@ def chat_page():
         humor = st.slider("Humor", 0, 100, 90)
         sarcasm = st.toggle("Sarcasm", True)
         loyalty = st.slider("Loyalty", 0, 100, 100)
-        
-          voice_replies = st.toggle(
+
+        voice_replies = st.toggle(
             "🔊 Voice replies",
             value=st.session_state.get("voice_replies", False)
         )
 
+        st.session_state.voice_replies = voice_replies
+        
+          
         st.session_state.voice_replies = voice_replies      
 
         st.session_state.voice_replies = voice_replies
