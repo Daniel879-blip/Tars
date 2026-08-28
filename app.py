@@ -919,8 +919,6 @@ function tarsScrollTo(elementId) {
 
 </script>
 """, height=0)
-</script>
-""", height=0)
 
 components.html("""
 <script>
