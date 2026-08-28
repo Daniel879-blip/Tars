@@ -1294,6 +1294,12 @@ def chat_page():
         humor = st.slider("Humor", 0, 100, 90)
         sarcasm = st.toggle("Sarcasm", True)
         loyalty = st.slider("Loyalty", 0, 100, 100)
+                voice_replies = st.toggle(
+            "🔊 Voice replies",
+            value=st.session_state.get("voice_replies", False)
+        )
+
+        st.session_state.voice_replies = voice_replies
 
         if st.button("＋ New conversation", use_container_width=True):
             st.session_state.messages = []
@@ -1387,7 +1393,8 @@ def chat_page():
             st.markdown(reply)
 
         st.session_state.messages.append({"role": "assistant", "content": reply})
-        speak(reply)
+        if st.session_state.get("voice_replies", False):
+    speak_reply(reply)
 
 
 
