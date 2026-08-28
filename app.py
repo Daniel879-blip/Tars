@@ -1403,8 +1403,7 @@ def chat_page():
 
         st.session_state.messages.append({"role": "assistant", "content": reply})
         if st.session_state.get("voice_replies", False):
-        if st.session_state.get("voice_replies", False):
-             pass   
+            pass   
 
 
 
