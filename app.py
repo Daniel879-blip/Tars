@@ -87,6 +87,8 @@ def hash_password(password):
 
 
 def create_user(name, email, password):
+    conn = None
+
     try:
         conn = sqlite3.connect(DB_FILE)
 
@@ -100,19 +102,19 @@ def create_user(name, email, password):
         )
 
         conn.commit()
-        conn.close()
 
         return True, "Account created successfully."
 
     except sqlite3.IntegrityError:
         return False, "An account with that email already exists."
 
-    except Exception as e:
+    except Exception:
         return False, "Could not create your account."
 
-def create_user(name, email, password):
-    # KEEP ALL YOUR EXISTING create_user CODE HERE
-    ...
+    finally:
+        if conn:
+            conn.close()
+
 
 
 # ============================================================
