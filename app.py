@@ -1298,38 +1298,42 @@ def chat_page():
             st.session_state.page = "home"
             st.rerun()
 
-        # RIGHT PANEL
-    st.markdown("""
-    <div class="tars-right-panel">
-        <h3>⚡ TARS Quick Actions</h3>
+# ============================================================
+# RIGHT PANEL
+# ============================================================
 
-        <div class="tars-right-panel-item">
-            💡 <b>Ideas</b><br>
-            <small>Get creative ideas</small>
-        </div>
+st.markdown("""
+<div class="tars-right-panel">
 
-        <div class="tars-right-panel-item">
-            ✍️ <b>Write</b><br>
-            <small>Help me write something</small>
-        </div>
+    <h3>⚡ TARS Quick Actions</h3>
 
-        <div class="tars-right-panel-item">
-            🧠 <b>Memory</b><br>
-            <small>Manage TARS memory</small>
-        </div>
-
-        <div class="tars-right-panel-item">
-            📂 <b>Archives</b><br>
-            <small>View saved chats</small>
-        </div>
-
-        <div class="tars-right-panel-item">
-            🎨 <b>Theme</b><br>
-            <small>Customize TARS</small>
-        </div>
+    <div class="tars-right-panel-item">
+        💡 <b>Ideas</b><br>
+        <small>Get creative ideas</small>
     </div>
-    """, unsafe_allow_html=True)
 
+    <div class="tars-right-panel-item">
+        ✍️ <b>Write</b><br>
+        <small>Help me write something</small>
+    </div>
+
+    <div class="tars-right-panel-item">
+        🧠 <b>Memory</b><br>
+        <small>Manage TARS memory</small>
+    </div>
+
+    <div class="tars-right-panel-item">
+        📂 <b>Archives</b><br>
+        <small>View saved chats</small>
+    </div>
+
+    <div class="tars-right-panel-item">
+        🎨 <b>Theme</b><br>
+        <small>Customize TARS</small>
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
     
     st.markdown(
         f"""
