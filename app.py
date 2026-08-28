@@ -1297,44 +1297,6 @@ def chat_page():
             st.session_state.messages = []
             st.session_state.page = "home"
             st.rerun()
-
-# ============================================================
-# RIGHT PANEL
-# ============================================================
-
-st.markdown("""
-<div class="tars-right-panel">
-
-    <h3>⚡ TARS Quick Actions</h3>
-
-    <div class="tars-right-panel-item">
-        💡 <b>Ideas</b><br>
-        <small>Get creative ideas</small>
-    </div>
-
-    <div class="tars-right-panel-item">
-        ✍️ <b>Write</b><br>
-        <small>Help me write something</small>
-    </div>
-
-    <div class="tars-right-panel-item">
-        🧠 <b>Memory</b><br>
-        <small>Manage TARS memory</small>
-    </div>
-
-    <div class="tars-right-panel-item">
-        📂 <b>Archives</b><br>
-        <small>View saved chats</small>
-    </div>
-
-    <div class="tars-right-panel-item">
-        🎨 <b>Theme</b><br>
-        <small>Customize TARS</small>
-    </div>
-
-</div>
-""", unsafe_allow_html=True)
-    
     st.markdown(
         f"""
         <div class="chat-top">
@@ -1347,7 +1309,6 @@ st.markdown("""
         """,
         unsafe_allow_html=True,
     )
-
 
     if not st.session_state.messages:
         x, y, z = st.columns(3)
@@ -1409,6 +1370,12 @@ st.markdown("""
 
         st.session_state.messages.append({"role": "assistant", "content": reply})
         speak(reply)
+
+
+
+
+
+
 # ============================================================
 # ROUTER
 # ============================================================
