@@ -1222,9 +1222,7 @@ def developer_page():
         st.write(
             "TARS AI is a next-generation artificial intelligence "
             "companion designed to provide intelligent, natural and "
-            "engaging conversations build modern, responsive, and user-focused applications,
-            combining front-end development with cloud technologies to create reliable, scalable, 
-            and intuitive digital experiences."
+            "engaging conversations build modern, responsive, and user-focused applications."
         )
 
         st.write(
