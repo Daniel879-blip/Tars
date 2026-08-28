@@ -960,13 +960,13 @@ button:active {
    ============================================================ */
 
 .auth-shell {
-    animation: authPop 0.25s cubic-bezier(.16,1,.3,1);
+    animation: authPop 0.12s cubic-bezier(.16,1,.3,1);
 }
 
 @keyframes authPop {
     0% {
         opacity: 0;
-        transform: scale(0.92) translateY(20px);
+        transform: scale(0.12) translateY(20px);
     }
 
     70% {
