@@ -1149,7 +1149,7 @@ function tarsScrollTo(elementId) {
    ============================================================ */
 
 .tars-page-transition {
-    animation: tarsPageTransition 0.55s ease-out;
+    animation: tarsPageTransition 0.25s ease-out;
 }
 
 @keyframes tarsPageTransition {
